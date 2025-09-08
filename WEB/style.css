@@ -1,0 +1,72 @@
+body { 
+  font-family: sans-serif; 
+}
+
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.dark-mode .step {
+  border-color: #555;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode button {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border: 1px solid #555;
+}
+
+#headerInputs label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* ----------------------- Bod 1 ----------------------- */
+#patternContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.step { 
+  flex: 1 1 80px; /* minimální šířka, rovnoměrné rozložení */
+  text-align: center;
+  border: 1px solid #ccc; 
+  padding: 10px; 
+  margin: 0;
+  border-radius: 8px; 
+  cursor: pointer;
+  min-width: 50px;
+  box-sizing: border-box;
+}
+
+.step.active { 
+  border: 2px solid blue; 
+}
+
+/* ----------------------- Bod 2 ----------------------- */
+#controls div {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.slider-label {
+  display: inline-block;
+  width: 100px; /* pevná šířka labelu */
+  text-align: right;
+}
+
+#controls input[type="range"] {
+  flex: 1;
+}
+
+#controls span {
+  width: 40px;
+  text-align: left;
+}

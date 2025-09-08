@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>Step Pattern Editor</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Dark mode toggle -->
+  <div id="darkModeToggle" style="position:absolute; top:10px; right:10px;">
+    <label>
+      <input type="checkbox" id="darkModeCheckbox"> Dark Mode
+    </label>
+  </div>
+
+  <h2>Editor pohybu krokového motoru</h2>
+
+  <div id="headerInputs">
+    <label>Název vzorce (max 19 znaků):
+      <input type="text" id="formulaName" maxlength="19">
+    </label>
+    <label>Krátký popis (max 38 znaků):
+      <input type="text" id="formulaDesc" maxlength="38">
+    </label>
+  </div>
+
+  <div id="patternContainer"></div>
+  <button onclick="addStep()">Přidat krok</button>
+  <button onclick="removeStep()">Odebrat aktivní krok</button>
+  <button onclick="saveToJson()">Uložit vzorec</button>
+
+  <h3>Aktivní krok – ovládání</h3>
+  <div id="controls">
+    <div>
+      <label class="slider-label">Pos (%):</label>
+      <input type="range" id="posSlider" min="0" max="100" value="0">
+      <span id="posVal">0</span>
+    </div>
+    <div>
+      <label class="slider-label">MaxSpeed (%/s):</label>
+      <input type="range" id="speedSlider" min="1" max="100" value="50">
+      <span id="speedVal">50</span>
+    </div>
+    <div>
+      <label class="slider-label">Accel (%/s²):</label>
+      <input type="range" id="accelSlider" min="1" max="100" value="10">
+      <span id="accelVal">10</span>
+    </div>
+    <div>
+      AUX1: <input type="checkbox" id="aux1Box">
+      AUX2: <input type="checkbox" id="aux2Box">
+    </div>
+    <div>
+      <label>Delay (ms): <input type="number" id="delayInput" min="0" value="0"></label>
+    </div>
+  </div>
+
+  <h3>Graf</h3>
+  <canvas id="motorChart" width="800" height="400"></canvas>
+
+  <pre id="output"></pre>
+
+  <script src="editor.js"></script>
+  <script>
+    // Dark mode
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    document.body.classList.toggle('dark-mode', darkMode);
+    document.getElementById('darkModeCheckbox').checked = darkMode;
+    document.getElementById('darkModeCheckbox').addEventListener('change', e => {
+      const enabled = e.target.checked;
+      document.body.classList.toggle('dark-mode', enabled);
+      localStorage.setItem('darkMode', enabled);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>Správa vzorců</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Dark mode toggle -->
+  <div id="darkModeToggle" style="position:absolute; top:10px; right:10px;">
+    <label>
+      <input type="checkbox" id="darkModeCheckbox"> Dark Mode
+    </label>
+  </div>
+
+  <h1>Seznam vzorců (PATTERNS)</h1>
+
+  <p>Vyber složku PATTERNS:</p>
+  <input type="file" id="folderPicker" webkitdirectory multiple>
+  
+  <h1>Seznam vzorců</h1>
+  <div id="patternList"></div>
+
+  <!-- Jediné tlačítko pro vytvoření nového vzorce -->
+  <button onclick="createNewPattern()">Vytvořit nový vzorec</button>
+
+  <script>
+    function createNewPattern() {
+      // odstraníme data z sessionStorage, aby editor spustil initPattern
+      sessionStorage.removeItem("currentPattern");
+      window.location.href = "editor.html";
+    }
+  </script>
+  <script src="script.js"></script>
+  <script>
+    // Dark mode
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    document.body.classList.toggle('dark-mode', darkMode);
+    document.getElementById('darkModeCheckbox').checked = darkMode;
+    document.getElementById('darkModeCheckbox').addEventListener('change', e => {
+      const enabled = e.target.checked;
+      document.body.classList.toggle('dark-mode', enabled);
+      localStorage.setItem('darkMode', enabled);
+    });
+  </script>
+</body>
+</html>
