@@ -24,6 +24,40 @@ body.dark-mode button {
   margin-bottom: 5px;
 }
 
+button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #f0f0f0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #e0e0e0;
+}
+
+body.dark-mode button {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+body.dark-mode button:hover {
+  background: #3a3a3a;
+}
+
+#output {
+  background: #f8f8f8;
+  padding: 10px;
+  border-radius: 6px;
+  overflow-x: auto;
+  max-height: 300px;
+}
+
+body.dark-mode #output {
+  background: #1e1e1e;
+}
+
 /* ----------------------- Bod 1 ----------------------- */
 #patternContainer {
   display: flex;
@@ -44,8 +78,22 @@ body.dark-mode button {
   box-sizing: border-box;
 }
 
-.step.active { 
-  border: 2px solid blue; 
+.step:hover {
+  background-color: #f5f5f5;
+}
+
+body.dark-mode .step:hover {
+  background-color: #2a2a2a;
+}
+
+.step.active {
+  border: 2px solid blue;
+  background-color: #e6f0ff; /* světle modré pozadí */
+}
+
+body.dark-mode .step.active {
+  border: 2px solid #66aaff;
+  background-color: #1a2a40; /* tmavě modrá pro dark mode */
 }
 
 /* ----------------------- Bod 2 ----------------------- */

@@ -82,3 +82,33 @@ async function loadPatterns() {
     container.appendChild(div);
   });
 }
+
+// načtení vzorců z ESP
+async function loadPatternsFromESP() {
+  const res = await fetch("/patterns");
+  const list = await res.json();
+  const container = document.getElementById("patternList");
+  container.innerHTML = "";
+  for(let f of list){
+    const div = document.createElement("div");
+    div.textContent = f;
+    div.onclick = async () => {
+      const resp = await fetch("/pattern?name=" + encodeURIComponent(f));
+      const data = await resp.json();
+      sessionStorage.setItem("currentPattern", JSON.stringify(data));
+      window.location.href = "editor.html";
+    };
+    container.appendChild(div);
+  }
+}
+
+// uložení vzorce do ESP
+async function savePatternToESP(patternObj){
+  await fetch("/savePattern", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(patternObj)
+  });
+  alert("Vzorec uložen do ESP!");
+}
+
