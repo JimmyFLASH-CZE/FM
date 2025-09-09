@@ -14,9 +14,6 @@
   </div>
 
   <h1>Seznam vzorců (PATTERNS)</h1>
-
-  <p>Vyber složku PATTERNS:</p>
-  <input type="file" id="folderPicker" webkitdirectory multiple>
   
   <h1>Seznam vzorců</h1>
   <div id="patternList"></div>
@@ -24,13 +21,6 @@
   <!-- Jediné tlačítko pro vytvoření nového vzorce -->
   <button onclick="createNewPattern()">Vytvořit nový vzorec</button>
 
-  <script>
-    function createNewPattern() {
-      // odstraníme data z sessionStorage, aby editor spustil initPattern
-      sessionStorage.removeItem("currentPattern");
-      window.location.href = "editor.html";
-    }
-  </script>
   <script src="script.js"></script>
   <script>
     // Dark mode

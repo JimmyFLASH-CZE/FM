@@ -206,34 +206,39 @@ function drawGraph() {
 }
 
 // uložení vzorce
-function saveToJson() {
+async function saveToJson() {
   const name = document.getElementById('formulaName').value.trim();
-  if(!name){alert("Zadejte název vzorce!");return;}
+  if (!name) {
+    alert("Zadejte název vzorce!");
+    return;
+  }
 
-  const safeName = name.replace(/[^A-Za-z0-9_-]/g,"_");
-  const parts = pattern.map(p=>({
-    targetPosPercent:p.targetPosPercent,
-    speedPercent:p.speedPercent,
-    accelPercent:p.accelPercent,
-    aux1:p.aux1,
-    aux2:p.aux2,
-    partDelay:p.partDelay
-  }));
+  const patternObj = {
+    name: name,
+    description: document.getElementById('formulaDesc').value,
+    parts: pattern.map(p => ({
+      targetPosPercent: p.targetPosPercent,
+      speedPercent: p.speedPercent,
+      accelPercent: p.accelPercent,
+      aux1: p.aux1,
+      aux2: p.aux2,
+      partDelay: p.partDelay
+    })),
+    partCount: pattern.length
+  };
 
-  const jsonObj = {name,description:document.getElementById('formulaDesc').value,parts,partCount:parts.length};
-  const jsonStr = JSON.stringify(jsonObj,null,2);
+  try {
+    const res = await fetch("/savePattern", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(patternObj)
+    });
 
-  sessionStorage.setItem("currentPattern",jsonStr); // uložení do paměti
-  const blob = new Blob([jsonStr],{type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download=`PATTERNS/${safeName}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  alert(`Vzorec "${name}" byl uložen.`);
+    const text = await res.text();
+    alert(text); // potvrzení uživateli
+  } catch (err) {
+    alert("Chyba při ukládání vzorce: " + err);
+  }
 }
 
 // načtení vzorce ze sessionStorage nebo fallback init

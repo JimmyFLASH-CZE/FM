@@ -1,114 +1,94 @@
 let patternFiles = [];
 
-// při načtení stránky zkontrolujeme sessionStorage
-window.addEventListener('load', async () => {
-  const storedFiles = sessionStorage.getItem("patternFilesData");
-  if (storedFiles) {
-    patternFiles = JSON.parse(storedFiles);
-    await loadPatterns();
-  }
-});
+// zavolání při načtení stránky
+window.addEventListener('load', loadPatterns);
 
-document.getElementById('folderPicker').addEventListener('change', async (event) => {
-  const files = event.target.files;
-  patternFiles = [];
-
-  for (let f of files) {
-    if (f.name.endsWith(".json")) {
-      // ulož do patternFiles jako objekt { name, content }
-      const content = await new Promise(resolve => {
-        const reader = new FileReader();
-        reader.onload = e => resolve(e.target.result);
-        reader.readAsText(f);
-      });
-      patternFiles.push({ name: f.name, content });
-    }
-  }
-
-  // uložíme do sessionStorage
-  sessionStorage.setItem("patternFilesData", JSON.stringify(patternFiles));
-
-  await loadPatterns();
-});
-
-// loadPatterns zůstává asynchronní
+// načtení vzorců
 async function loadPatterns() {
   const container = document.getElementById('patternList');
-  container.innerHTML = "";
+  container.innerHTML = "<p>Načítám seznam vzorců...</p>";
 
-  if (patternFiles.length === 0) {
-    container.innerHTML = "<p>Žádné JSON soubory ve složce.</p>";
-    return;
-  }
+  try {
+    const res = await fetch("/patterns");
+    if (!res.ok) throw new Error("Chyba při načítání vzorců");
 
-  patternFiles.forEach((data, idx) => {
-    const div = document.createElement('div');
-    div.className = "patternItem";
+    const list = await res.json();
+    container.innerHTML = "";
 
-    let obj;
-    try {
-      obj = JSON.parse(data.content);
-    } catch (err) {
-      div.textContent = `Chybný JSON: ${data.name}`;
-      container.appendChild(div);
+    if (list.length === 0) {
+      container.innerHTML = "<p>Žádné vzorce ve složce PATTERNS.</p>";
       return;
     }
 
-    const openBtn = document.createElement('button');
-    openBtn.textContent = "Otevřít";
-    openBtn.addEventListener('click', () => {
-      sessionStorage.setItem("currentPattern", data.content);
-      window.location.href = "editor.html";
+    list.forEach(f => {
+      const div = document.createElement('div');
+      div.className = "patternItem";
+
+      // název vzorce
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = f;
+      nameSpan.style.marginLeft = "10px";
+
+      // tlačítko Otevřít
+      const openBtn = document.createElement('button');
+      openBtn.textContent = "Otevřít";
+      openBtn.onclick = async () => {
+        try {
+          const resp = await fetch("/pattern?name=" + encodeURIComponent(f));
+          if (!resp.ok) throw new Error("Vzorec nenalezen");
+          const data = await resp.json();
+          sessionStorage.setItem("currentPattern", JSON.stringify(data));
+          window.location.href = "editor.html";
+        } catch(e) {
+          alert("Chyba při načítání vzorce: " + e.message);
+        }
+      };
+
+      // tlačítko Smazat
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = "Smazat";
+      deleteBtn.onclick = async () => {
+        if (!confirm(`Opravdu chcete smazat "${f}"?`)) return;
+        try {
+          const resp = await fetch("/deletePattern?name=" + encodeURIComponent(f), { method: "POST" });
+          if (!resp.ok) throw new Error(await resp.text());
+          loadPatterns(); // obnovit seznam
+        } catch(e) {
+          alert("Chyba při mazání vzorce: " + e.message);
+        }
+      };
+
+      div.appendChild(openBtn);
+      div.appendChild(deleteBtn);
+      div.appendChild(nameSpan);
+
+      container.appendChild(div);
     });
-
-    const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = "Smazat";
-    deleteBtn.addEventListener('click', () => {
-      if (confirm(`Opravdu chcete odebrat "${data.name}" ze seznamu?`)) {
-        patternFiles.splice(idx, 1);
-        // aktualizujeme sessionStorage
-        sessionStorage.setItem("patternFilesData", JSON.stringify(patternFiles));
-        loadPatterns();
-      }
-    });
-
-    const textSpan = document.createElement('span');
-    textSpan.style.marginLeft = "10px";
-    textSpan.innerHTML = `<strong>${obj.name || data.name}</strong> – ${obj.description || "Bez popisu"}`;
-
-    div.appendChild(openBtn);
-    div.appendChild(deleteBtn);
-    div.appendChild(textSpan);
-    container.appendChild(div);
-  });
-}
-
-// načtení vzorců z ESP
-async function loadPatternsFromESP() {
-  const res = await fetch("/patterns");
-  const list = await res.json();
-  const container = document.getElementById("patternList");
-  container.innerHTML = "";
-  for(let f of list){
-    const div = document.createElement("div");
-    div.textContent = f;
-    div.onclick = async () => {
-      const resp = await fetch("/pattern?name=" + encodeURIComponent(f));
-      const data = await resp.json();
-      sessionStorage.setItem("currentPattern", JSON.stringify(data));
-      window.location.href = "editor.html";
-    };
-    container.appendChild(div);
+  } catch (err) {
+    container.innerHTML = `<p>Chyba při načítání vzorců: ${err}</p>`;
   }
 }
 
 // uložení vzorce do ESP
-async function savePatternToESP(patternObj){
-  await fetch("/savePattern", {
+async function savePatternToESP(patternObj) {
+  const res = await fetch("/savePattern", {
     method: "POST",
     headers: {"Content-Type":"application/json"},
     body: JSON.stringify(patternObj)
   });
-  alert("Vzorec uložen do ESP!");
+
+  if(res.ok){
+    alert("Vzorec uložen do ESP!");
+  } else {
+    const text = await res.text();
+    alert("Chyba při ukládání: " + text);
+  }
 }
 
+// vytvoření nového vzorce
+function createNewPattern() {
+  // Vyčistit sessionStorage, aby editor načetl prázdný vzorec
+  sessionStorage.removeItem("currentPattern");
+  // Přesměrovat na editor
+  window.location.href = "editor.html";
+}
