@@ -123,6 +123,7 @@ async function ImportPattern() {
         alert("Neplatný formát JSON souboru!");
         return;
       }
+
       // podrobnější kontrola každé části
       const requiredFields = ["speedPercent", "accelPercent"];
       for (const [i, part] of obj.parts.entries()) {
@@ -141,7 +142,7 @@ async function ImportPattern() {
           }
         }
       }
-      alert("Chyba při načítání souboru: " + (err.message || err));
+
       // uložení na server (LittleFS)
       const res = await fetch("/savePattern", {
         method: "POST",
@@ -166,4 +167,3 @@ async function ImportPattern() {
   // otevře dialog
   input.click();
 }
-
