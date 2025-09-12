@@ -123,7 +123,25 @@ async function ImportPattern() {
         alert("Neplatný formát JSON souboru!");
         return;
       }
-
+      // podrobnější kontrola každé části
+      const requiredFields = ["speedPercent", "accelPercent"];
+      for (const [i, part] of obj.parts.entries()) {
+        if (typeof part !== "object" || part === null) {
+          alert(`Část #${i + 1} není objekt!`);
+          return;
+        }
+        for (const field of requiredFields) {
+          if (!(field in part)) {
+            alert(`Část #${i + 1} postrádá pole '${field}'!`);
+            return;
+          }
+          if (typeof part[field] !== "number") {
+            alert(`Pole '${field}' v části #${i + 1} není číslo!`);
+            return;
+          }
+        }
+      }
+      alert("Chyba při načítání souboru: " + (err.message || err));
       // uložení na server (LittleFS)
       const res = await fetch("/savePattern", {
         method: "POST",

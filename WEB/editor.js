@@ -18,7 +18,7 @@ document.getElementById('darkModeCheckbox').addEventListener('change', e => {
 function initPattern() {
   pattern = [
     { targetPosPercent: Math.floor(Math.random()*100), speedPercent: 50, accelPercent: 10, aux1: false, aux2: false, partDelay: 0 },
-    { targetPosPercent: Math.floor(Math.random()*100), speedPercent: 50, accelPercent: 10, aux1: false, aux2: false, partDelay: 0 }
+    { targetPosPercent: Math.floor(Math.random()*101), speedPercent: 50, accelPercent: 10, aux1: false, aux2: false, partDelay: 0 }
   ];
   renderSteps();
   setActiveStep(0);
@@ -287,7 +287,7 @@ async function saveToJson() {
     const text = await res.text();
     alert(text); // potvrzení uživateli
   } catch (err) {
-    alert("Chyba při ukládání vzorce: " + err);
+    alert("Chyba při ukládání vzorce: " + (err.message || err));
   }
 }
 
