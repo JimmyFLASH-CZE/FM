@@ -49,7 +49,7 @@ async function loadPatterns() {
       }
 
       const baseName = f.replace(/\.[^/.]+$/, "");
-      nameSpan.innerHTML = `<strong>${baseName}</strong>${description}`;
+      nameSpan.innerHTML = `<strong>${baseName}</strong> ${description}`;
 
       // kliknutí na span = otevřít editor
       nameSpan.onclick = async () => {
@@ -81,7 +81,8 @@ async function loadPatterns() {
         }
       };
 
-      div.appendChild(deleteBtn);
+      nameSpan.appendChild(deleteBtn);
+
       div.appendChild(nameSpan);
       container.appendChild(div);
     }

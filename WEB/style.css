@@ -83,8 +83,9 @@ body.dark-mode #output {
   cursor: pointer;
   white-space: pre-line;
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: space-between
+  justify-content: space-between;
 }
 
 .patternSpan:hover {
@@ -100,7 +101,7 @@ body.dark-mode #output {
   cursor: pointer;
   width: 40px;
   margin: 2px;
-  margin-left: 10px;
+  margin-left: auto;
 
 }
 
