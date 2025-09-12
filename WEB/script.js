@@ -13,7 +13,6 @@ document.getElementById('darkModeCheckbox').addEventListener('change', e => {
   localStorage.setItem('darkMode', enabled);
 });
 
-// načtení vzorců
 async function loadPatterns() {
   const container = document.getElementById('patternList');
   container.innerHTML = "<p>Načítám seznam vzorců...</p>";
@@ -30,19 +29,30 @@ async function loadPatterns() {
       return;
     }
 
-    list.forEach(f => {
+    for (const f of list) {
       const div = document.createElement('div');
       div.className = "patternItem";
 
-      // název vzorce
+      // název a popis
       const nameSpan = document.createElement('span');
-      nameSpan.textContent = f;
-      nameSpan.style.marginLeft = "10px";
+      nameSpan.className = "patternSpan";
 
-      // tlačítko Otevřít
-      const openBtn = document.createElement('button');
-      openBtn.textContent = "Otevřít";
-      openBtn.onclick = async () => {
+      let description = "";
+      try {
+        const resp = await fetch("/pattern?name=" + encodeURIComponent(f));
+        if (resp.ok) {
+          const data = await resp.json();
+          description = data.description || "";
+        }
+      } catch {
+        description = "";
+      }
+
+      const baseName = f.replace(/\.[^/.]+$/, "");
+      nameSpan.innerHTML = `<strong>${baseName}</strong>\n${description}`;
+
+      // kliknutí na span = otevřít editor
+      nameSpan.onclick = async () => {
         try {
           const resp = await fetch("/pattern?name=" + encodeURIComponent(f));
           if (!resp.ok) throw new Error("Vzorec nenalezen");
@@ -54,10 +64,13 @@ async function loadPatterns() {
         }
       };
 
-      // tlačítko Smazat
+      // tlačítko Smazat (vpravo)
       const deleteBtn = document.createElement('button');
-      deleteBtn.textContent = "Smazat";
-      deleteBtn.onclick = async () => {
+      deleteBtn.textContent = "✖";
+      deleteBtn.title = "Delete";
+      deleteBtn.className = "deleteBtn";
+      deleteBtn.onclick = async (e) => {
+        e.stopPropagation(); // aby klik na delete neotevřel pattern
         if (!confirm(`Opravdu chcete smazat "${f}"?`)) return;
         try {
           const resp = await fetch("/deletePattern?name=" + encodeURIComponent(f), { method: "POST" });
@@ -68,12 +81,10 @@ async function loadPatterns() {
         }
       };
 
-      div.appendChild(openBtn);
-      div.appendChild(deleteBtn);
       div.appendChild(nameSpan);
-
+      div.appendChild(deleteBtn);
       container.appendChild(div);
-    });
+    }
   } catch (err) {
     container.innerHTML = `<p>Chyba při načítání vzorců: ${err}</p>`;
   }

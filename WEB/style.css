@@ -59,6 +59,62 @@ body.dark-mode #output {
   background: #1e1e1e;
 }
 
+/* ----------------------- patternList / patternItem ----------------------- */
+.patternList {
+  margin-bottom: 15px;
+}
+
+.patternItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.patternSpan {
+  margin-left: 10px;
+  text-align: left;
+  flex: 1;
+  cursor: pointer;
+  white-space: pre-line;
+}
+
+.patternSpan:hover {
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 16px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.deleteBtn:hover {
+  color: darkred;
+}
+
+/* Dark mode */
+body.dark-mode .patternItem {
+  border-bottom: 1px solid #555;
+}
+
+body.dark-mode .patternSpan:hover {
+  background-color: #333;
+}
+
+body.dark-mode .deleteBtn {
+  color: #ff6b6b;
+}
+
+body.dark-mode .deleteBtn:hover {
+  color: #ff3333;
+}
+
 /* ----------------------- patternContainer with step buttons ----------------------- */
 #patternContainer {
   display: flex;
