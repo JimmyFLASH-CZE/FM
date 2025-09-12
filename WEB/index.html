@@ -3,35 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <title>Správa vzorců</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Dark mode toggle -->
-  <div id="darkModeToggle" style="position:absolute; top:10px; right:10px;">
-    <label>
-      <input type="checkbox" id="darkModeCheckbox"> Dark Mode
-    </label>
+  <!-- Záhlaví -->
+  <div style="display:flex; flex-direction:row ; align-items:center">
+    <!-- Nadpis -->
+    <div style="width:auto; text-align:center; flex:1;">
+      <h3>Pattern list</h3>
+    </div>
+    
+    <!-- Dark mode toggle -->
+    <div id="darkModeToggle" style="width:auto; text-align:right;">
+      <input type="checkbox" id="darkModeCheckbox"> Dark
+    </div>
   </div>
-
-  <h1>Seznam vzorců (PATTERNS)</h1>
   
-  <h1>Seznam vzorců</h1>
+  <!-- seznam vzorců -->
   <div id="patternList"></div>
 
-  <!-- Jediné tlačítko pro vytvoření nového vzorce -->
-  <button onclick="createNewPattern()">Vytvořit nový vzorec</button>
+  <button onclick="createNewPattern()">Create NEW pattern</button>
+  <button onclick="ImportPattern()">Import Pattern</button>
 
   <script src="script.js"></script>
-  <script>
-    // Dark mode
-    const darkMode = localStorage.getItem('darkMode') === 'true';
-    document.body.classList.toggle('dark-mode', darkMode);
-    document.getElementById('darkModeCheckbox').checked = darkMode;
-    document.getElementById('darkModeCheckbox').addEventListener('change', e => {
-      const enabled = e.target.checked;
-      document.body.classList.toggle('dark-mode', enabled);
-      localStorage.setItem('darkMode', enabled);
-    });
-  </script>
 </body>
 </html>

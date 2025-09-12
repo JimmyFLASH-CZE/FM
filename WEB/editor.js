@@ -4,11 +4,21 @@ let pattern = [];
 let chart;
 let activeIndex = -1; // index aktivního kroku
 
+// Dark mode
+const darkMode = localStorage.getItem('darkMode') === 'true';
+document.body.classList.toggle('dark-mode', darkMode);
+document.getElementById('darkModeCheckbox').checked = darkMode;
+document.getElementById('darkModeCheckbox').addEventListener('change', e => {
+  const enabled = e.target.checked;
+  document.body.classList.toggle('dark-mode', enabled);
+  localStorage.setItem('darkMode', enabled);
+});
+
 // inicializace patternu
 function initPattern() {
   pattern = [
-    { targetPosPercent: Math.floor(Math.random()*101), speedPercent: 50, accelPercent: 10, aux1: false, aux2: false, partDelay: 0 },
-    { targetPosPercent: Math.floor(Math.random()*101), speedPercent: 50, accelPercent: 10, aux1: false, aux2: false, partDelay: 0 }
+    { targetPosPercent: Math.floor(Math.random()*100), speedPercent: 50, accelPercent: 10, aux1: false, aux2: false, partDelay: 0 },
+    { targetPosPercent: Math.floor(Math.random()*100), speedPercent: 50, accelPercent: 10, aux1: false, aux2: false, partDelay: 0 }
   ];
   renderSteps();
   setActiveStep(0);
@@ -164,7 +174,20 @@ function drawGraph() {
     if(step.aux2) auxLayers.push({x0:timeOffset, x1:timeOffset+0.001, color:'rgba(255,192,203,0.4)'});
   });
 
-  document.getElementById('output').textContent = JSON.stringify(pattern,null,2);
+  const patternObj = {
+    name: document.getElementById('formulaName').value,
+    description: document.getElementById('formulaDesc').value,
+    parts: pattern.map(p => ({
+      targetPosPercent: p.targetPosPercent,
+      speedPercent: p.speedPercent,
+      accelPercent: p.accelPercent,
+      aux1: p.aux1,
+      aux2: p.aux2,
+      partDelay: p.partDelay
+    })),
+    partCount: pattern.length
+  };
+  document.getElementById('output').textContent = JSON.stringify(patternObj, null, 2);
 
   if(chart) chart.destroy();
   const ctx = document.getElementById('motorChart').getContext('2d');
@@ -181,7 +204,7 @@ function drawGraph() {
       pointRadius:0,
       clip:false,
       segment:{
-        borderColor: ctx => ctx.p0.parsed.stepIdx===activeIndex ? 'red' : 'blue'
+        borderColor: ctx => ctx.p0.parsed.stepIdx===activeIndex ? 'blue' : 'gray'
       }
     }]
   },
@@ -192,11 +215,11 @@ function drawGraph() {
     normalized:true,
     clip:false,
     scales:{
-      x:{ type:'linear', title:{display:true,text:'Čas (s)'} },
-      y:{ min:0, max:100, title:{display:true,text:'Poloha (%)'} }
+      x:{ type:'linear', title:{display:true,text:'Time (s)'} },
+      y:{ min:0, max:100, title:{display:true,text:'Position (%)'} }
     },
     plugins:{
-      legend:{ display:false }, // ✅ zde vypnuto
+      legend:{ display:false }, // legenda vypnuta
       annotation:{
         annotations: auxLayers.reduce((acc,a,i)=>{acc['aux'+i]={type:'box',xMin:a.x0,xMax:a.x1,yMin:0,yMax:10,color:a.color}; return acc;},{})
       }
@@ -204,6 +227,33 @@ function drawGraph() {
   }
 });
 }
+
+// načtení vzorce ze sessionStorage nebo fallback init
+window.onload = () => {
+  const stored = sessionStorage.getItem("currentPattern");
+  if(stored){
+    try{
+      const obj = JSON.parse(stored);
+      document.getElementById("formulaName").value = obj.name || "";
+      document.getElementById("formulaDesc").value = obj.description || "";
+      pattern = (obj.parts||[]).map(p=>({
+        targetPosPercent: p.targetPosPercent ?? p.position ?? 0,
+        speedPercent: p.speedPercent ?? p.maxSpeed ?? 50,
+        accelPercent: p.accelPercent ?? p.acceleration ?? 10,
+        aux1: p.aux1 ?? p.AUX1 ?? false,
+        aux2: p.aux2 ?? p.AUX2 ?? false,
+        partDelay: p.partDelay ?? p.delay ?? 0
+      }));
+      renderSteps();
+      setActiveStep(0);
+      drawGraph();
+      return;
+    }catch(e){
+      console.error("Chyba při načítání JSON:",e);
+    }
+  }
+  initPattern();
+};
 
 // uložení vzorce
 async function saveToJson() {
@@ -241,29 +291,40 @@ async function saveToJson() {
   }
 }
 
-// načtení vzorce ze sessionStorage nebo fallback init
-window.onload = () => {
-  const stored = sessionStorage.getItem("currentPattern");
-  if(stored){
-    try{
-      const obj = JSON.parse(stored);
-      document.getElementById("formulaName").value = obj.name || "";
-      document.getElementById("formulaDesc").value = obj.description || "";
-      pattern = (obj.parts||[]).map(p=>({
-        targetPosPercent: p.targetPosPercent ?? p.position ?? 0,
-        speedPercent: p.speedPercent ?? p.maxSpeed ?? 50,
-        accelPercent: p.accelPercent ?? p.acceleration ?? 10,
-        aux1: p.aux1 ?? p.AUX1 ?? false,
-        aux2: p.aux2 ?? p.AUX2 ?? false,
-        partDelay: p.partDelay ?? p.delay ?? 0
-      }));
-      renderSteps();
-      setActiveStep(0);
-      drawGraph();
-      return;
-    }catch(e){
-      console.error("Chyba při načítání JSON:",e);
-    }
+// Export vzorce do souboru
+function exportPattern() {
+  const name = document.getElementById('formulaName').value.trim();
+    if (!name) {
+    alert("Zadejte název vzorce!");
+    return;
   }
-  initPattern();
-};
+
+  const patternObj = {
+    name: name,
+    description: document.getElementById('formulaDesc').value,
+    parts: pattern.map(p => ({
+      targetPosPercent: p.targetPosPercent,
+      speedPercent: p.speedPercent,
+      accelPercent: p.accelPercent,
+      aux1: p.aux1,
+      aux2: p.aux2,
+      partDelay: p.partDelay
+    })),
+    partCount: pattern.length
+  };
+
+  const jsonStr = JSON.stringify(patternObj, null, 2);
+  const blob = new Blob([jsonStr], {type: "application/json"});
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name.replace(/[^a-z0-9_\-]/gi, '_') + ".json";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 100);
+}
+

@@ -1,10 +1,11 @@
 body { 
+  background-color: #cbe6ff;
   font-family: sans-serif; 
 }
 
 body.dark-mode {
-  background-color: #121212;
-  color: #e0e0e0;
+  background-color: #1b1b1b;
+  color: #b1b1b1;
 }
 
 body.dark-mode .step {
@@ -33,13 +34,13 @@ button {
   transition: background 0.2s;
 }
 
-button:hover {
-  background: #e0e0e0;
-}
-
 body.dark-mode button {
   background: #2a2a2a;
   border-color: #444;
+}
+
+button:hover {
+  background: #e0e0e0;
 }
 
 body.dark-mode button:hover {
@@ -58,7 +59,7 @@ body.dark-mode #output {
   background: #1e1e1e;
 }
 
-/* ----------------------- Bod 1 ----------------------- */
+/* ----------------------- patternContainer with step buttons ----------------------- */
 #patternContainer {
   display: flex;
   flex-wrap: wrap;
@@ -88,12 +89,12 @@ body.dark-mode .step:hover {
 
 .step.active {
   border: 2px solid blue;
-  background-color: #e6f0ff; /* světle modré pozadí */
+  background-color: #9dc4ff; /* světle modré pozadí */
 }
 
 body.dark-mode .step.active {
   border: 2px solid #66aaff;
-  background-color: #1a2a40; /* tmavě modrá pro dark mode */
+  background-color: #2e435f; /* tmavě modrá pro dark mode */
 }
 
 /* ----------------------- Bod 2 ----------------------- */
@@ -117,4 +118,54 @@ body.dark-mode .step.active {
 #controls span {
   width: 40px;
   text-align: left;
+}
+
+/* ----------------------- Mobilní úpravy ----------------------- */
+@media (max-width: 600px) {
+  body {
+    font-size: 16px;
+    padding: 5px;
+  }
+
+  #headerInputs label {
+    font-size: 1em;
+  }
+
+  #patternContainer {
+    gap: 8px;
+  }
+
+  .step {
+    min-width: unset;
+    width: 100%;
+    font-size: 1.1em;
+    padding: 14px 8px;
+  }
+
+  #controls div {
+    gap: 2px;
+    margin-bottom: 10px;
+  }
+
+  .slider-label {
+    width: 85px;
+    text-align: left;
+    margin-bottom: 2px;
+  }
+
+  #controls input[type="range"] {
+    width: 100%;
+  }
+
+  #motorChart {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100vw;
+  }
+
+  button {
+    width: 100%;
+    margin-bottom: 8px;
+    font-size: 1.1em;
+  }
 }

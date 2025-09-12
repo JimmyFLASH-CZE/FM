@@ -2,81 +2,87 @@
 <html lang="cs">
 <head>
   <meta charset="UTF-8">
-  <title>Step Pattern Editor</title>
+  <title>Pattern Editor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <!-- Dark mode toggle -->
-  <div id="darkModeToggle" style="position:absolute; top:10px; right:10px;">
-    <label>
-      <input type="checkbox" id="darkModeCheckbox"> Dark Mode
-    </label>
+  <!-- Záhlaví -->
+  <div style="display:flex; flex-direction:row ; align-items:center">
+    <!-- Zpět na seznam vzorců -->
+    <div style="margin:10px 0; width:auto">
+      <button onclick="window.location.href='index.html'">← Back</button>
+    </div>
+    
+    <!-- Nadpis -->
+    <div style="width:auto; text-align:center; flex:1;">
+      <h3>Pattern Editor</h3>
+    </div>
+    
+    <!-- Dark mode toggle -->
+    <div id="darkModeToggle" style="width:auto; text-align:right;">
+      <input type="checkbox" id="darkModeCheckbox"> Dark
+    </div>
   </div>
-
-  <!-- Zpět na seznam vzorců -->
-  <div style="margin:10px 0;">
-    <button onclick="window.location.href='index.html'">← Zpět na seznam vzorců</button>
+    
+  <!-- Name / Description -->
+  <div style="display: flex; align-items: center; gap: 8px;">
+    <label class="slider-label" style="margin:2px 0;">Name: </label>
+    <input type="text" id="formulaName" maxlength="19" style="flex:1;">
   </div>
-
-  <h2>Editor pohybu krokového motoru</h2>
-
-  <div id="headerInputs">
-    <label>Název vzorce (max 19 znaků):
-      <input type="text" id="formulaName" maxlength="19">
-    </label>
-    <label>Krátký popis (max 38 znaků):
-      <input type="text" id="formulaDesc" maxlength="38">
-    </label>
+  <div style="display: flex; align-items: center; gap: 8px;">  
+    <label class="slider-label" style="margin:2px 0;">Description: </label>
+    <input type="text" id="formulaDesc" maxlength="38" style="flex:1;">  
   </div>
-
+  
+  <!-- Buttons -->
+  <div style="position:relative; margin-top:10px; margin-bottom:10px;">
+    <button onclick="addStep()">Add step</button>
+    <button onclick="removeStep()">Remove step</button>
+    <button onclick="saveToJson()">Save pattern</button>
+  </div>  
+  
+  <!-- Step buttons -->
   <div id="patternContainer"></div>
-  <button onclick="addStep()">Přidat krok</button>
-  <button onclick="removeStep()">Odebrat aktivní krok</button>
-  <button onclick="saveToJson()">Uložit vzorec</button>
 
-  <h3>Aktivní krok – ovládání</h3>
+  <!-- Sliders / Controls -->
   <div id="controls">
     <div>
-      <label class="slider-label">Pos (%):</label>
+      <label class="slider-label">Position:</label>
       <input type="range" id="posSlider" min="0" max="100" value="0">
-      <span id="posVal">0</span>
+      <span id="posVal">0</span>%
     </div>
     <div>
-      <label class="slider-label">MaxSpeed (%/s):</label>
+      <label class="slider-label">Speed:</label>
       <input type="range" id="speedSlider" min="1" max="100" value="50">
-      <span id="speedVal">50</span>
+      <span id="speedVal">50</span>%
     </div>
     <div>
-      <label class="slider-label">Accel (%/s²):</label>
+      <label class="slider-label">Accel:</label>
       <input type="range" id="accelSlider" min="1" max="100" value="10">
-      <span id="accelVal">10</span>
+      <span id="accelVal">10</span>%
     </div>
-    <div>
-      AUX1: <input type="checkbox" id="aux1Box">
-      AUX2: <input type="checkbox" id="aux2Box">
-    </div>
-    <div>
-      <label>Delay (ms): <input type="number" id="delayInput" min="0" value="0"></label>
+    <div style="display:flex; flex-direction:row ; align-items: center;">
+      <div style="flex:1;">
+       <label class="slider-label">Delay (ms): </label><input type="number" id="delayInput" min="0" value="0" style="max-width:60px; margin-right:10px;"> 
+      </div>
+      <div style="flex:1;">AUX1: <input type="checkbox" id="aux1Box"></div>
+      <div style="flex:1;">AUX2: <input type="checkbox" id="aux2Box"></div>
     </div>
   </div>
 
-  <h3>Graf</h3>
-  <canvas id="motorChart" width="800" height="400"></canvas>
+  <!-- Graf -->
+  <canvas id="motorChart" width="800" height="400" style="width:100%;max-width:800px;height:auto;"></canvas>
 
+  <!-- Export button -->
+  <div style="position:relative; margin-top:10px; margin-bottom:50px;">
+    <button onclick="exportPattern()" style="position:absolute; right:10px;">Export</button>
+  </div>
+  
+  <!-- JSON -->
   <pre id="output"></pre>
 
   <script src="editor.js"></script>
-  <script>
-    // Dark mode
-    const darkMode = localStorage.getItem('darkMode') === 'true';
-    document.body.classList.toggle('dark-mode', darkMode);
-    document.getElementById('darkModeCheckbox').checked = darkMode;
-    document.getElementById('darkModeCheckbox').addEventListener('change', e => {
-      const enabled = e.target.checked;
-      document.body.classList.toggle('dark-mode', enabled);
-      localStorage.setItem('darkMode', enabled);
-    });
-  </script>
 </body>
 </html>

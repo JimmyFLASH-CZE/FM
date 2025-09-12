@@ -3,6 +3,16 @@ let patternFiles = [];
 // zavolání při načtení stránky
 window.addEventListener('load', loadPatterns);
 
+// Dark mode
+const darkMode = localStorage.getItem('darkMode') === 'true';
+document.body.classList.toggle('dark-mode', darkMode);
+document.getElementById('darkModeCheckbox').checked = darkMode;
+document.getElementById('darkModeCheckbox').addEventListener('change', e => {
+  const enabled = e.target.checked;
+  document.body.classList.toggle('dark-mode', enabled);
+  localStorage.setItem('darkMode', enabled);
+});
+
 // načtení vzorců
 async function loadPatterns() {
   const container = document.getElementById('patternList');
@@ -92,3 +102,50 @@ function createNewPattern() {
   // Přesměrovat na editor
   window.location.href = "editor.html";
 }
+
+// import vzorce z JSON souboru
+async function ImportPattern() {
+  // vytvoření inputu pro výběr souboru
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "application/json";
+
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const obj = JSON.parse(text);
+
+      // základní kontrola
+      if (!obj.name || !Array.isArray(obj.parts)) {
+        alert("Neplatný formát JSON souboru!");
+        return;
+      }
+
+      // uložení na server (LittleFS)
+      const res = await fetch("/savePattern", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(obj)
+      });
+
+      const msg = await res.text();
+      alert(msg);
+
+      // znovunačtení seznamu
+      if (typeof loadPatternList === "function") {
+        loadPatternList();
+      } else {
+        location.reload();
+      }
+    } catch (err) {
+      alert("Chyba při načítání souboru: " + err);
+    }
+  };
+
+  // otevře dialog
+  input.click();
+}
+
