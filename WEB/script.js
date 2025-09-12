@@ -49,7 +49,7 @@ async function loadPatterns() {
       }
 
       const baseName = f.replace(/\.[^/.]+$/, "");
-      nameSpan.innerHTML = `<div style="flex: 1;"><strong>${baseName}</strong></div><div style="flex: 1;">${description}</div>`;
+      nameSpan.innerHTML = `<strong>${baseName}</strong><div style="text-align:center; flex: 1;">${description}</div>`;
 
       // kliknutí na span = otevřít editor
       nameSpan.onclick = async () => {

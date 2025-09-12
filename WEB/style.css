@@ -69,7 +69,7 @@ body.dark-mode #output {
   align-items: center;
   justify-content: space-between;
   padding: 6px 10px;
-  border-bottom: 1px solid #ccc;
+
 }
 
 .patternSpan {
@@ -101,7 +101,6 @@ body.dark-mode #output {
   width: 40px;
   margin: 2px;
   margin-left: auto;
-
 }
 
 .deleteBtn:hover {
@@ -109,10 +108,6 @@ body.dark-mode #output {
 }
 
 /* Dark mode */
-body.dark-mode .patternItem {
-  border-bottom: 1px solid #555;
-}
-
 body.dark-mode .patternSpan:hover {
   background-color: #333;
 }
