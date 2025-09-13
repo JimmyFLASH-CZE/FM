@@ -157,21 +157,36 @@ function drawGraph() {
 
   let timeOffset = 0;
   pattern.forEach((step, idx) => {
-    let startPos = idx===0 ? pattern[pattern.length-1].targetPosPercent : pattern[idx-1].targetPosPercent;
+    let startPos = idx === 0 ? pattern[pattern.length - 1].targetPosPercent : pattern[idx - 1].targetPosPercent;
     let segment = simulateMotion(startPos, step.targetPosPercent, step.speedPercent, step.accelPercent);
 
-    segment.forEach(p => dataset.push({x:p.x+timeOffset, y:p.y, stepIdx:idx}));
-    if (segment.length>0) timeOffset = dataset[dataset.length-1].x;
+    segment.forEach(p => dataset.push({ x: p.x + timeOffset, y: p.y, stepIdx: idx }));
+    let stepStart = timeOffset;
+    if (segment.length > 0) timeOffset = dataset[dataset.length - 1].x;
 
-    if(step.partDelay>0){
-      dataset.push({x:timeOffset, y:step.targetPosPercent, stepIdx:idx});
-      timeOffset += step.partDelay/1000.0;
-      dataset.push({x:timeOffset, y:step.targetPosPercent, stepIdx:idx});
+    // Zpoždění
+    if (step.partDelay > 0) {
+      dataset.push({ x: timeOffset, y: step.targetPosPercent, stepIdx: idx });
+      timeOffset += step.partDelay / 1000.0;
+      dataset.push({ x: timeOffset, y: step.targetPosPercent, stepIdx: idx });
     }
+    let stepEnd = timeOffset;
 
-    // AUX vrstvy
-    if(step.aux1) auxLayers.push({x0:timeOffset, x1:timeOffset+0.001, color:'rgba(255,255,0,0.4)'});
-    if(step.aux2) auxLayers.push({x0:timeOffset, x1:timeOffset+0.001, color:'rgba(255,192,203,0.4)'});
+    // AUX vrstvy – vykresli celý obdélník přes trvání kroku
+    if (step.aux1) auxLayers.push({
+      x0: stepStart,
+      x1: stepEnd,
+      y0: 0,
+      y1: 10,
+      backgroundColor: 'rgba(21, 255, 0, 0.4)'
+    });
+    if (step.aux2) auxLayers.push({
+      x0: stepStart,
+      x1: stepEnd,
+      y0: 10,
+      y1: 20,
+      backgroundColor: 'rgba(240, 93, 93, 0.4)'
+    });
   });
 
   const patternObj = {
@@ -189,43 +204,54 @@ function drawGraph() {
   };
   document.getElementById('output').textContent = JSON.stringify(patternObj, null, 2);
 
-  if(chart) chart.destroy();
+  if (chart) chart.destroy();
   const ctx = document.getElementById('motorChart').getContext('2d');
 
   chart = new Chart(ctx, {
-  type:'line',
-  data:{
-    datasets:[{
-      label:'Poloha motoru (%)',
-      data:dataset,
-      fill:false,
-      tension:0.3,
-      borderWidth:3,
-      pointRadius:0,
-      clip:false,
-      segment:{
-        borderColor: ctx => ctx.p0.parsed.stepIdx===activeIndex ? 'blue' : 'gray'
-      }
-    }]
-  },
-  options:{
-    responsive:false,
-    animation:false,
-    parsing:false,
-    normalized:true,
-    clip:false,
-    scales:{
-      x:{ type:'linear', title:{display:true,text:'Time (s)'} },
-      y:{ min:0, max:100, title:{display:true,text:'Position (%)'} }
+    type: 'line',
+    data: {
+      datasets: [{
+        label: 'Poloha motoru (%)',
+        data: dataset,
+        fill: false,
+        tension: 0.3,
+        borderWidth: 3,
+        pointRadius: 0,
+        clip: false,
+        segment: {
+          borderColor: ctx => ctx.p0.parsed.stepIdx === activeIndex ? 'blue' : 'gray'
+        }
+      }]
     },
-    plugins:{
-      legend:{ display:false }, // legenda vypnuta
-      annotation:{
-        annotations: auxLayers.reduce((acc,a,i)=>{acc['aux'+i]={type:'box',xMin:a.x0,xMax:a.x1,yMin:0,yMax:10,color:a.color}; return acc;},{})
+    options: {
+      responsive: false,
+      animation: false,
+      parsing: false,
+      normalized: true,
+      clip: false,
+      scales: {
+        x: { type: 'linear', title: { display: true, text: 'Time (s)' } },
+        y: { min: 0, max: 100, title: { display: true, text: 'Position (%)' } }
+      },
+      plugins: {
+        legend: { display: false },
+        annotation: {
+          annotations: auxLayers.reduce((acc, a, i) => {
+            acc['aux' + i] = {
+              type: 'box',
+              xMin: a.x0,
+              xMax: a.x1,
+              yMin: a.y0,
+              yMax: a.y1,
+              backgroundColor: a.backgroundColor,
+              borderWidth: 0
+            };
+            return acc;
+          }, {})
+        }
       }
     }
-  }
-});
+  });
 }
 
 // načtení vzorce ze sessionStorage nebo fallback init
@@ -259,7 +285,7 @@ window.onload = () => {
 async function saveToJson() {
   const name = document.getElementById('formulaName').value.trim();
   if (!name) {
-    alert("Zadejte název vzorce!");
+    alert("Fill the pattern name!");
     return;
   }
 
@@ -287,7 +313,7 @@ async function saveToJson() {
     const text = await res.text();
     alert(text); // potvrzení uživateli
   } catch (err) {
-    alert("Chyba při ukládání vzorce: " + (err.message || err));
+    alert("Save pattern error: " + (err.message || err));
   }
 }
 
@@ -295,7 +321,7 @@ async function saveToJson() {
 function exportPattern() {
   const name = document.getElementById('formulaName').value.trim();
     if (!name) {
-    alert("Zadejte název vzorce!");
+    alert("Fill the pattern name!");
     return;
   }
 

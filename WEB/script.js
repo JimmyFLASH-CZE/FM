@@ -60,7 +60,7 @@ async function loadPatterns() {
           sessionStorage.setItem("currentPattern", JSON.stringify(data));
           window.location.href = "editor.html";
         } catch(e) {
-          alert("Chyba při načítání vzorce: " + e.message);
+          alert("Pattern Load error: " + e.message);
         }
       };
 
@@ -77,7 +77,7 @@ async function loadPatterns() {
           if (!resp.ok) throw new Error(await resp.text());
           loadPatterns(); // obnovit seznam
         } catch(e) {
-          alert("Chyba při mazání vzorce: " + e.message);
+          alert("Delete pattern error: " + e.message);
         }
       };
 
@@ -100,7 +100,7 @@ async function savePatternToESP(patternObj) {
   });
 
   if(res.ok){
-    alert("Vzorec uložen do ESP!");
+    alert("Pattern Saved to ESP!");
   } else {
     const text = await res.text();
     alert("Chyba při ukládání: " + text);
@@ -132,7 +132,7 @@ async function ImportPattern() {
 
       // základní kontrola
       if (!obj.name || !Array.isArray(obj.parts)) {
-        alert("Neplatný formát JSON souboru!");
+        alert("Incorrect JSON file format!");
         return;
       }
 
@@ -140,16 +140,16 @@ async function ImportPattern() {
       const requiredFields = ["speedPercent", "accelPercent"];
       for (const [i, part] of obj.parts.entries()) {
         if (typeof part !== "object" || part === null) {
-          alert(`Část #${i + 1} není objekt!`);
+          alert(`Part #${i + 1} is not an object!`);
           return;
         }
         for (const field of requiredFields) {
           if (!(field in part)) {
-            alert(`Část #${i + 1} postrádá pole '${field}'!`);
+            alert(`Part #${i + 1} missing field '${field}'!`);
             return;
           }
           if (typeof part[field] !== "number") {
-            alert(`Pole '${field}' v části #${i + 1} není číslo!`);
+            alert(`Field '${field}' in part #${i + 1} is not number!`);
             return;
           }
         }
@@ -172,7 +172,7 @@ async function ImportPattern() {
         location.reload();
       }
     } catch (err) {
-      alert("Chyba při načítání souboru: " + err);
+      alert("Pattern Load error: " + err);
     }
   };
 
