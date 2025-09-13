@@ -3,6 +3,7 @@
 let pattern = [];
 let chart;
 let activeIndex = -1; // index aktivního kroku
+let isDirty = false;  // flag pro sledování změn
 
 // Dark mode
 const darkMode = localStorage.getItem('darkMode') === 'true';
@@ -14,11 +15,24 @@ document.getElementById('darkModeCheckbox').addEventListener('change', e => {
   localStorage.setItem('darkMode', enabled);
 });
 
+// Sledování kroku zpět a BACK button
+function goBack() {
+  window.location.href = 'index.html';
+}
+
+// Sledování pokusu o opuštění stránky
+window.addEventListener("beforeunload", function (e) {
+  if (isDirty) {
+    e.preventDefault();
+    e.returnValue = ""; // nutné pro zobrazení varování v některých prohlížečích
+  }
+});
+
 // inicializace patternu
 function initPattern() {
   pattern = [
-    { targetPosPercent: Math.floor(Math.random()*100), speedPercent: 50, accelPercent: 10, aux1: false, aux2: false, partDelay: 0 },
-    { targetPosPercent: Math.floor(Math.random()*101), speedPercent: 50, accelPercent: 10, aux1: false, aux2: false, partDelay: 0 }
+    { targetPosPercent: Math.floor(Math.random()*51+50), speedPercent: 50, accelPercent: 10, aux1: false, aux2: false, partDelay: 0 },
+    { targetPosPercent: Math.floor(Math.random()*50), speedPercent: 50, accelPercent: 10, aux1: false, aux2: false, partDelay: 0 }
   ];
   renderSteps();
   setActiveStep(0);
@@ -32,7 +46,7 @@ function renderSteps() {
   pattern.forEach((step, idx) => {
     const div = document.createElement('div');
     div.className = 'step';
-    div.textContent = "Krok " + (idx+1);
+    div.textContent = "Step " + (idx+1);
     div.onclick = () => setActiveStep(idx);
     container.appendChild(div);
   });
@@ -103,7 +117,12 @@ function updateActiveStep() {
   document.getElementById('speedVal').textContent = step.speedPercent;
   document.getElementById('accelVal').textContent = step.accelPercent;
   drawGraph();
+  isDirty = true; // označit jako změněné
 }
+
+// eventy Name a Description
+document.getElementById('formulaName').addEventListener('input', () => { isDirty = true; });
+document.getElementById('formulaDesc').addEventListener('input', () => { isDirty = true; });
 
 // eventy sliderů a checkboxů
 document.getElementById('posSlider').addEventListener('input', updateActiveStep);
@@ -279,6 +298,7 @@ window.onload = () => {
     }
   }
   initPattern();
+  isDirty = false;
 };
 
 // uložení vzorce
@@ -312,6 +332,7 @@ async function saveToJson() {
 
     const text = await res.text();
     alert(text); // potvrzení uživateli
+    isDirty = false; // reset sledovače změn
   } catch (err) {
     alert("Save pattern error: " + (err.message || err));
   }
