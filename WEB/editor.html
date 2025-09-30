@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <title>Pattern Editor</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
 
@@ -16,6 +16,7 @@
     <!-- Zpět na seznam vzorců -->
     <div style="margin:10px 0; width:auto">
       <button onclick="goBack()">← Back</button>
+      <button onclick="saveToJson()">💾 Save</button>
     </div>
     
     <!-- Nadpis -->
@@ -43,7 +44,6 @@
   <div style="position:relative; margin-top:10px; margin-bottom:10px;">
     <button onclick="addStep()">Add step</button>
     <button onclick="removeStep()">Remove step</button>
-    <button onclick="saveToJson()">Save pattern</button>
   </div>  
   
   <!-- Step buttons -->

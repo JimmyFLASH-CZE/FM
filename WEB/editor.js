@@ -31,8 +31,8 @@ window.addEventListener("beforeunload", function (e) {
 // inicializace patternu
 function initPattern() {
   pattern = [
-    { targetPosPercent: Math.floor(Math.random()*51+50), speedPercent: 50, accelPercent: 10, aux1: false, aux2: false, partDelay: 0 },
-    { targetPosPercent: Math.floor(Math.random()*50), speedPercent: 50, accelPercent: 10, aux1: false, aux2: false, partDelay: 0 }
+    { targetPosPercent: Math.floor(Math.random() * 51 + 50), speedPercent: 50, accelPercent: 10, aux1: false, aux2: false, partDelay: 0 },
+    { targetPosPercent: Math.floor(Math.random() * 50), speedPercent: 50, accelPercent: 10, aux1: false, aux2: false, partDelay: 0 }
   ];
   renderSteps();
   setActiveStep(0);
@@ -46,7 +46,7 @@ function renderSteps() {
   pattern.forEach((step, idx) => {
     const div = document.createElement('div');
     div.className = 'step';
-    div.textContent = "Step " + (idx+1);
+    div.textContent = "Step " + (idx + 1);
     div.onclick = () => setActiveStep(idx);
     container.appendChild(div);
   });
@@ -133,38 +133,38 @@ document.getElementById('aux2Box').addEventListener('change', updateActiveStep);
 document.getElementById('delayInput').addEventListener('input', updateActiveStep);
 
 // simulace trapezoidního profilu s jemným zastavením
-function simulateMotion(startPos, targetPos, maxSpeed, accel, stepTime=0.01) {
+function simulateMotion(startPos, targetPos, maxSpeed, accel, stepTime = 0.01) {
   let points = [];
   let pos = startPos;
   let vel = 0;
   let time = 0;
   let dir = Math.sign(targetPos - startPos);
-  if (dir === 0) return [{x:0, y:startPos}];
+  if (dir === 0) return [{ x: 0, y: startPos }];
 
   let maxSteps = 10000;
-  for (let i=0; i<maxSteps; i++) {
+  for (let i = 0; i < maxSteps; i++) {
     let distance = targetPos - pos;
     if (Math.abs(distance) < 0.1) {
       pos = targetPos;
       vel = 0;
-      points.push({x:time, y:pos});
+      points.push({ x: time, y: pos });
       break;
     }
 
-    let brakeDist = (vel*vel)/(2*accel);
+    let brakeDist = (vel * vel) / (2 * accel);
     if (Math.abs(distance) <= brakeDist) {
-      vel -= accel*stepTime;
+      vel -= accel * stepTime;
       if (vel < 0) vel = 0;
     } else {
       if (vel < maxSpeed) {
-        vel += accel*stepTime;
+        vel += accel * stepTime;
         if (vel > maxSpeed) vel = maxSpeed;
       }
     }
 
     pos += dir * vel * stepTime;
     time += stepTime;
-    points.push({x:time, y:parseFloat(pos.toFixed(4))});
+    points.push({ x: time, y: parseFloat(pos.toFixed(4)) });
   }
   return points;
 }
@@ -249,7 +249,7 @@ function drawGraph() {
       normalized: true,
       clip: false,
       scales: {
-        x: { type: 'linear', title: { display: true, text: 'Time (s)' } },
+        x: { type: 'linear', title: { display: true, text: 'Time' },ticks: { display: false } },
         y: { min: 0, max: 100, title: { display: true, text: 'Position (%)' } }
       },
       plugins: {
@@ -268,6 +268,15 @@ function drawGraph() {
             return acc;
           }, {})
         }
+      },
+      // klikání na graf pro výběr kroku
+      onClick: (evt, activeEls) => {
+        const points = chart.getElementsAtEventForMode(evt, 'nearest', { intersect: false }, false);
+        if (points.length) {
+          const idx = points[0].index;
+          const stepIdx = dataset[idx].stepIdx;
+          setActiveStep(stepIdx);
+        }
       }
     }
   });
@@ -276,12 +285,12 @@ function drawGraph() {
 // načtení vzorce ze sessionStorage nebo fallback init
 window.onload = () => {
   const stored = sessionStorage.getItem("currentPattern");
-  if(stored){
-    try{
+  if (stored) {
+    try {
       const obj = JSON.parse(stored);
       document.getElementById("formulaName").value = obj.name || "";
       document.getElementById("formulaDesc").value = obj.description || "";
-      pattern = (obj.parts||[]).map(p=>({
+      pattern = (obj.parts || []).map(p => ({
         targetPosPercent: p.targetPosPercent ?? p.position ?? 0,
         speedPercent: p.speedPercent ?? p.maxSpeed ?? 50,
         accelPercent: p.accelPercent ?? p.acceleration ?? 10,
@@ -293,8 +302,8 @@ window.onload = () => {
       setActiveStep(0);
       drawGraph();
       return;
-    }catch(e){
-      console.error("Chyba při načítání JSON:",e);
+    } catch (e) {
+      console.error("Chyba při načítání JSON:", e);
     }
   }
   initPattern();
@@ -341,7 +350,7 @@ async function saveToJson() {
 // Export vzorce do souboru
 function exportPattern() {
   const name = document.getElementById('formulaName').value.trim();
-    if (!name) {
+  if (!name) {
     alert("Fill the pattern name!");
     return;
   }
@@ -361,7 +370,7 @@ function exportPattern() {
   };
 
   const jsonStr = JSON.stringify(patternObj, null, 2);
-  const blob = new Blob([jsonStr], {type: "application/json"});
+  const blob = new Blob([jsonStr], { type: "application/json" });
   const url = URL.createObjectURL(blob);
 
   const a = document.createElement('a');
