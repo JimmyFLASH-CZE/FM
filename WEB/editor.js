@@ -16,9 +16,7 @@ document.getElementById('darkModeCheckbox').addEventListener('change', e => {
 });
 
 // Sledování kroku zpět a BACK button
-function goBack() {
-  window.location.href = 'index.html';
-}
+function goBack() { window.location.href = 'index.html'; }
 
 // Sledování pokusu o opuštění stránky
 window.addEventListener("beforeunload", function (e) {
@@ -31,8 +29,8 @@ window.addEventListener("beforeunload", function (e) {
 // inicializace patternu
 function initPattern() {
   pattern = [
-    { targetPosPercent: Math.floor(Math.random() * 51 + 50), speedPercent: 50, accelPercent: 10, aux1: false, aux2: false, partDelay: 0 },
-    { targetPosPercent: Math.floor(Math.random() * 50), speedPercent: 50, accelPercent: 10, aux1: false, aux2: false, partDelay: 0 }
+    { targetPosPercent: Math.floor(Math.random() * 51 + 50), speedPercent: 50, accelPercent: 10, randomizePercent: 0, aux1: false, aux2: false, partDelay: 0 },
+    { targetPosPercent: Math.floor(Math.random() * 50), speedPercent: 50, accelPercent: 10, randomizePercent: 0, aux1: false, aux2: false, partDelay: 0 }
   ];
   renderSteps();
   setActiveStep(0);
@@ -60,6 +58,7 @@ function addStep() {
     targetPosPercent: Math.floor(Math.random() * 101),
     speedPercent: 50,
     accelPercent: 10,
+    randomizePercent: 0,
     aux1: false,
     aux2: false,
     partDelay: 0
@@ -83,6 +82,7 @@ function removeStep() {
 
 // nastavení aktivního kroku
 function setActiveStep(idx) {
+  if (idx < 0 || idx >= pattern.length) return;
   activeIndex = idx;
 
   document.querySelectorAll('.step').forEach((el, i) => {
@@ -96,6 +96,8 @@ function setActiveStep(idx) {
   document.getElementById('speedVal').textContent = step.speedPercent;
   document.getElementById('accelSlider').value = step.accelPercent;
   document.getElementById('accelVal').textContent = step.accelPercent;
+  document.getElementById('randomSlider').value = step.randomizePercent || 0;
+  document.getElementById('randomVal').textContent = step.randomizePercent || 0;
   document.getElementById('aux1Box').checked = step.aux1;
   document.getElementById('aux2Box').checked = step.aux2;
   document.getElementById('delayInput').value = step.partDelay;
@@ -110,12 +112,14 @@ function updateActiveStep() {
   step.targetPosPercent = parseInt(document.getElementById('posSlider').value);
   step.speedPercent = parseInt(document.getElementById('speedSlider').value);
   step.accelPercent = parseInt(document.getElementById('accelSlider').value);
+  step.randomizePercent = parseInt(document.getElementById('randomSlider').value);
   step.aux1 = document.getElementById('aux1Box').checked;
   step.aux2 = document.getElementById('aux2Box').checked;
   step.partDelay = parseInt(document.getElementById('delayInput').value);
   document.getElementById('posVal').textContent = step.targetPosPercent;
   document.getElementById('speedVal').textContent = step.speedPercent;
   document.getElementById('accelVal').textContent = step.accelPercent;
+  document.getElementById('randomVal').textContent = step.randomizePercent;
   drawGraph();
   isDirty = true; // označit jako změněné
 }
@@ -128,6 +132,7 @@ document.getElementById('formulaDesc').addEventListener('input', () => { isDirty
 document.getElementById('posSlider').addEventListener('input', updateActiveStep);
 document.getElementById('speedSlider').addEventListener('input', updateActiveStep);
 document.getElementById('accelSlider').addEventListener('input', updateActiveStep);
+document.getElementById('randomSlider').addEventListener('input', updateActiveStep);
 document.getElementById('aux1Box').addEventListener('change', updateActiveStep);
 document.getElementById('aux2Box').addEventListener('change', updateActiveStep);
 document.getElementById('delayInput').addEventListener('input', updateActiveStep);
@@ -172,18 +177,60 @@ function simulateMotion(startPos, targetPos, maxSpeed, accel, stepTime = 0.01) {
 // vykreslení grafu
 function drawGraph() {
   let dataset = [];
+  let upperBand = []; // horní hranice náhodného rozsahu
+  let lowerBand = []; // dolní hranice náhodného rozsahu
   let auxLayers = [];
 
   let timeOffset = 0;
   pattern.forEach((step, idx) => {
-    let startPos = idx === 0 ? pattern[pattern.length - 1].targetPosPercent : pattern[idx - 1].targetPosPercent;
-    let segment = simulateMotion(startPos, step.targetPosPercent, step.speedPercent, step.accelPercent);
+    const startPos = idx === 0 ? pattern[pattern.length - 1].targetPosPercent : pattern[idx - 1].targetPosPercent;
+    const prevRand = idx === 0 ? pattern[pattern.length - 1].randomizePercent : pattern[idx - 1].randomizePercent;
+    const currRand = step.randomizePercent;
 
-    segment.forEach(p => dataset.push({ x: p.x + timeOffset, y: p.y, stepIdx: idx }));
+    const segment = simulateMotion(startPos, step.targetPosPercent, step.speedPercent, step.accelPercent);
+    const n = segment.length;
+
+    // Výpočet start a end bodů Randomize
+    let startMin = startPos - prevRand / 2;
+    let startMax = startPos + prevRand / 2;
+    if (startMin < 0) { startMax += -startMin; startMin = 0; }
+    if (startMax > 100) { startMin -= (startMax - 100); startMax = 100; }
+
+    let endMin = step.targetPosPercent - currRand / 2;
+    let endMax = step.targetPosPercent + currRand / 2;
+    if (endMin < 0) { endMax += -endMin; endMin = 0; }
+    if (endMax > 100) { endMin -= (endMax - 100); endMax = 100; }
+
+    segment.forEach((p, i) => {
+      const x = p.x + timeOffset;
+      dataset.push({ x, y: p.y, stepIdx: idx });
+
+      let t = n > 1 ? i / (n - 1) : 1;
+
+      // Start a end body – zachovat přesnou hodnotu
+      if (i === 0) {
+        lowerBand.push({ x, y: startMin });
+        upperBand.push({ x, y: startMax });
+        return;
+      } else if (i === n - 1) {
+        lowerBand.push({ x, y: endMin });
+        upperBand.push({ x, y: endMax });
+        return;
+      }
+
+      // Prostřední body – plynulá interpolace
+      const s = 0.5 - 0.5 * Math.cos(Math.PI * t); // cosine easing
+      const minY = startMin + (endMin - startMin) * s;
+      const maxY = startMax + (endMax - startMax) * s;
+
+      lowerBand.push({ x, y: Math.max(0, minY) });
+      upperBand.push({ x, y: Math.min(100, maxY) });
+    });
+
     let stepStart = timeOffset;
     if (segment.length > 0) timeOffset = dataset[dataset.length - 1].x;
 
-    // Zpoždění
+    // === Zpoždění ===
     if (step.partDelay > 0) {
       dataset.push({ x: timeOffset, y: step.targetPosPercent, stepIdx: idx });
       timeOffset += step.partDelay / 1000.0;
@@ -191,23 +238,16 @@ function drawGraph() {
     }
     let stepEnd = timeOffset;
 
-    // AUX vrstvy – vykresli celý obdélník přes trvání kroku
+    // === AUX vrstvy ===
     if (step.aux1) auxLayers.push({
-      x0: stepStart,
-      x1: stepEnd,
-      y0: 0,
-      y1: 10,
-      backgroundColor: 'rgba(21, 255, 0, 0.4)'
+      x0: stepStart, x1: stepEnd, y0: 0, y1: 10, backgroundColor: 'rgba(21, 255, 0, 0.4)'
     });
     if (step.aux2) auxLayers.push({
-      x0: stepStart,
-      x1: stepEnd,
-      y0: 10,
-      y1: 20,
-      backgroundColor: 'rgba(240, 93, 93, 0.4)'
+      x0: stepStart, x1: stepEnd, y0: 10, y1: 20, backgroundColor: 'rgba(240, 93, 93, 0.4)'
     });
   });
 
+  // === objekt pro export ===
   const patternObj = {
     name: document.getElementById('formulaName').value,
     description: document.getElementById('formulaDesc').value,
@@ -215,6 +255,7 @@ function drawGraph() {
       targetPosPercent: p.targetPosPercent,
       speedPercent: p.speedPercent,
       accelPercent: p.accelPercent,
+      randomizePercent: p.randomizePercent,
       aux1: p.aux1,
       aux2: p.aux2,
       partDelay: p.partDelay
@@ -223,13 +264,33 @@ function drawGraph() {
   };
   document.getElementById('output').textContent = JSON.stringify(patternObj, null, 2);
 
+  // === vykreslení grafu ===
   if (chart) chart.destroy();
   const ctx = document.getElementById('motorChart').getContext('2d');
 
   chart = new Chart(ctx, {
     type: 'line',
     data: {
-      datasets: [{
+      datasets: [
+      // spodní hranice náhodného rozsahu
+      {
+        label: 'Min range',
+        data: lowerBand,
+        borderWidth: 0,
+        pointRadius: 0,
+        fill: '+1', // vyplň mezi tímto a dalším datasetem
+      },
+      // horní hranice náhodného rozsahu + průhledná výplň
+      {
+        label: 'Max range',
+        data: upperBand,
+        borderWidth: 0,
+        pointRadius: 0,
+        backgroundColor: 'rgba(0, 0, 255, 0.15)',
+        fill: '-1', // vyplň mezi horní a spodní křivkou
+      },
+      // hlavní trajektorie polohy motoru – až po oblasti RANDOMIZE
+      {
         label: 'Poloha motoru (%)',
         data: dataset,
         fill: false,
@@ -240,7 +301,8 @@ function drawGraph() {
         segment: {
           borderColor: ctx => ctx.p0.parsed.stepIdx === activeIndex ? 'blue' : 'gray'
         }
-      }]
+      }
+    ]
     },
     options: {
       responsive: false,
@@ -249,11 +311,12 @@ function drawGraph() {
       normalized: true,
       clip: false,
       scales: {
-        x: { type: 'linear', title: { display: true, text: 'Time' },ticks: { display: false } },
+        x: { type: 'linear', title: { display: true, text: 'Time' }, ticks: { display: false } },
         y: { min: 0, max: 100, title: { display: true, text: 'Position (%)' } }
       },
       plugins: {
         legend: { display: false },
+        // AUX vrstvy – nezávislé překryvy mimo random oblast
         annotation: {
           annotations: auxLayers.reduce((acc, a, i) => {
             acc['aux' + i] = {
@@ -270,7 +333,7 @@ function drawGraph() {
         }
       },
       // klikání na graf pro výběr kroku
-      onClick: (evt, activeEls) => {
+      onClick: (evt) => {
         const points = chart.getElementsAtEventForMode(evt, 'nearest', { intersect: false }, false);
         if (points.length) {
           const idx = points[0].index;
@@ -281,6 +344,7 @@ function drawGraph() {
     }
   });
 }
+
 
 // načtení vzorce ze sessionStorage nebo fallback init
 window.onload = () => {
@@ -294,6 +358,7 @@ window.onload = () => {
         targetPosPercent: p.targetPosPercent ?? p.position ?? 0,
         speedPercent: p.speedPercent ?? p.maxSpeed ?? 50,
         accelPercent: p.accelPercent ?? p.acceleration ?? 10,
+        randomizePercent: p.randomizePercent ?? p.randomization ?? 0,
         aux1: p.aux1 ?? p.AUX1 ?? false,
         aux2: p.aux2 ?? p.AUX2 ?? false,
         partDelay: p.partDelay ?? p.delay ?? 0
@@ -325,6 +390,7 @@ async function saveToJson() {
       targetPosPercent: p.targetPosPercent,
       speedPercent: p.speedPercent,
       accelPercent: p.accelPercent,
+      randomizePercent: p.randomizePercent,
       aux1: p.aux1,
       aux2: p.aux2,
       partDelay: p.partDelay
@@ -362,6 +428,7 @@ function exportPattern() {
       targetPosPercent: p.targetPosPercent,
       speedPercent: p.speedPercent,
       accelPercent: p.accelPercent,
+      randomizePercent: p.randomizePercent,
       aux1: p.aux1,
       aux2: p.aux2,
       partDelay: p.partDelay

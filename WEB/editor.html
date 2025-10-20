@@ -1,6 +1,7 @@
 <!-- 2025-10-20 -->
 <!DOCTYPE html>
 <html lang="cs">
+
 <head>
   <meta charset="UTF-8">
   <title>Pattern Editor</title>
@@ -11,6 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
 
 </head>
+
 <body>
   <!-- Záhlaví -->
   <div style="display:flex; flex-direction:row ; align-items:center">
@@ -19,34 +21,34 @@
       <button onclick="goBack()">← Back</button>
       <button onclick="saveToJson()">💾 Save</button>
     </div>
-    
+
     <!-- Nadpis -->
     <div style="width:auto; text-align:center; flex:1;">
       <h3>Pattern Editor</h3>
     </div>
-    
+
     <!-- Dark mode toggle -->
     <div id="darkModeToggle" style="width:auto; text-align:right;">
       <input type="checkbox" id="darkModeCheckbox"> Dark
     </div>
   </div>
-    
+
   <!-- Name / Description -->
   <div style="display: flex; align-items: center; gap: 8px;">
     <label class="slider-label" style="margin:2px 0;">Name: </label>
     <input type="text" id="formulaName" maxlength="19" style="flex:1;">
   </div>
-  <div style="display: flex; align-items: center; gap: 8px;">  
+  <div style="display: flex; align-items: center; gap: 8px;">
     <label class="slider-label" style="margin:2px 0;">Description: </label>
-    <input type="text" id="formulaDesc" maxlength="42" style="flex:1;">  
+    <input type="text" id="formulaDesc" maxlength="42" style="flex:1;">
   </div>
-  
+
   <!-- Buttons -->
   <div style="position:relative; margin-top:10px; margin-bottom:10px;">
     <button onclick="addStep()">Add step</button>
     <button onclick="removeStep()">Remove step</button>
-  </div>  
-  
+  </div>
+
   <!-- Step buttons -->
   <div id="patternContainer"></div>
 
@@ -67,9 +69,15 @@
       <input type="range" id="accelSlider" min="1" max="100" value="10">
       <span id="accelVal">10</span>%
     </div>
+    <div>
+      <label class="slider-label">Randomize:</label>
+      <input type="range" id="randomSlider" min="0" max="100" value="0">
+      <span id="randomVal">0</span>%
+    </div>
     <div style="display:flex; flex-direction:row ; align-items: center;">
       <div style="flex:1;">
-       <label class="slider-label">Delay (ms): </label><input type="number" id="delayInput" min="0" value="0" style="max-width:60px; margin-right:10px;"> 
+        <label class="slider-label">Delay (ms): </label><input type="number" id="delayInput" min="0" value="0"
+          style="max-width:60px; margin-right:10px;">
       </div>
       <div style="flex:1;">AUX1: <input type="checkbox" id="aux1Box"></div>
       <div style="flex:1;">AUX2: <input type="checkbox" id="aux2Box"></div>
@@ -83,10 +91,11 @@
   <div style="position:relative; margin-top:10px; margin-bottom:50px;">
     <button onclick="exportPattern()" style="position:absolute; right:10px;">Export</button>
   </div>
-  
+
   <!-- JSON -->
   <pre id="output"></pre>
 
   <script src="editor.js"></script>
 </body>
+
 </html>
