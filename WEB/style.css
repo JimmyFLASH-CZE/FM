@@ -1,3 +1,57 @@
+/* === LOGIN MODAL === */
+.login-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.4);
+  z-index: 2000;
+}
+.login-modal.hidden {
+  display: none;
+}
+.login-box {
+  background: #fff8fa;
+  padding: 20px 28px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  text-align: center;
+  width: 280px;
+  transition: all 0.3s;
+}
+.login-box h3 {
+  margin-top: 0;
+  color: #b10038;
+}
+.login-box input {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px;
+  border: 1px solid #ffb1c4;
+  border-radius: 6px;
+  background: #fff;
+  color: #3b0a1e;
+}
+.login-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+/* DARK MODE */
+body.dark-mode .login-box {
+  background: #1f1f1f;
+  color: #eee;
+  border: 1px solid #444;
+}
+body.dark-mode .login-box input {
+  background: #2a2a2a;
+  border-color: #555;
+  color: #ddd;
+}
+
+
 /* ----------------------- ZÁKLAD ----------------------- */
 body { 
   background: linear-gradient(180deg, #fff0f4 0%, #ffe5ec 100%);
@@ -404,3 +458,4 @@ body.dark-mode #output {
     font-size: 1.05em;
   }
 }
+
