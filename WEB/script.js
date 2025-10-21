@@ -3,15 +3,31 @@ let patternFiles = [];
 // zavolání při načtení stránky
 window.addEventListener('load', loadPatterns);
 
-// Dark mode
+// -------------------- DARK MODE + LOGO --------------------
+const darkModeCheckbox = document.getElementById('darkModeCheckbox');
+const appLogoImg = document.querySelector('.app-logo img');
+
+// funkce pro nastavení loga podle režimu
+function updateLogo(isDark) {
+  if (!appLogoImg) return;
+  appLogoImg.src = isDark ? "JFM-X_fist_drkbg.png" : "JFM-X_fist_ltbg.png";
+}
+
+// načtení uloženého režimu
 const darkMode = localStorage.getItem('darkMode') === 'true';
 document.body.classList.toggle('dark-mode', darkMode);
-document.getElementById('darkModeCheckbox').checked = darkMode;
-document.getElementById('darkModeCheckbox').addEventListener('change', e => {
-  const enabled = e.target.checked;
-  document.body.classList.toggle('dark-mode', enabled);
-  localStorage.setItem('darkMode', enabled);
-});
+if (darkModeCheckbox) darkModeCheckbox.checked = darkMode;
+updateLogo(darkMode);
+
+// reagovat na změnu
+if (darkModeCheckbox) {
+  darkModeCheckbox.addEventListener('change', e => {
+    const enabled = e.target.checked;
+    document.body.classList.toggle('dark-mode', enabled);
+    localStorage.setItem('darkMode', enabled);
+    updateLogo(enabled);
+  });
+}
 
 async function loadPatterns() {
   const container = document.getElementById('patternList');

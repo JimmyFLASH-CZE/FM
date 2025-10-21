@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="cs">
+
 <head>
   <meta charset="UTF-8">
   <title>Pattern List</title>
@@ -7,30 +8,39 @@
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
+
 <body>
-  <!-- Záhlaví -->
-  <div style="display:flex; flex-direction:row ; align-items:center">
-    <!-- Nadpis -->
-    <div style="width:auto; text-align:center; flex:1;">
-      <h3>Pattern list</h3>
+  <!-- === Horní aplikační panel === -->
+  <header class="app-header">
+    <div class="app-logo">
+      <img src="JFM-X_fist_ltbg.png" alt="App logo">
+      <span>Pattern Studio</span>
     </div>
-    
-    <!-- Dark mode toggle -->
-    <div id="darkModeToggle" style="width:auto; text-align:right;">
-      <input type="checkbox" id="darkModeCheckbox"> Dark
+    <div class="app-actions">
+      <button id="loginBtn" title="Login / Logout">🔒</button>
+      <div class="dark-toggle">
+        <input type="checkbox" id="darkModeCheckbox">
+        <label for="darkModeCheckbox">Dark</label>
+      </div>
     </div>
+  </header>
+
+  <!-- === Panel aktuální stránky === -->
+  <div class="page-header">
+    <h3>Pattern List</h3>
   </div>
-  
-  <!-- seznam vzorců -->
-  <div id="patternList">
-  </div>
-  
-  <!-- Tlačítka -->
-  <div style="position:relative; margin-top:20px; margin-bottom:20px;"> 
-    <button onclick="createNewPattern()">Create NEW pattern</button>
-    <button onclick="ImportPattern()">Import Pattern</button>
-  </div>
+
+  <!-- === Obsah stránky === -->
+  <main class="page-content">
+    <div id="patternList" class="patternList"></div>
+
+    <div class="page-buttons">
+      <button onclick="createNewPattern()">Create NEW pattern</button>
+      <button onclick="ImportPattern()">Import Pattern</button>
+    </div>
+  </main>
 
   <script src="script.js"></script>
 </body>
+
 </html>
