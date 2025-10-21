@@ -1,7 +1,7 @@
 /* ----------------------- ZÁKLAD ----------------------- */
 body { 
   background: linear-gradient(180deg, #fff0f4 0%, #ffe5ec 100%);
-  font-family: "Inter", "Segoe UI", sans-serif; 
+  font-family: "Segoe UI", sans-serif; 
   margin: 0;
   padding: 0;
   color: #3b0a1e;
@@ -18,15 +18,13 @@ body.dark-mode {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(90deg, #ff758c, #ff3f6b);
+  background: linear-gradient(90deg, #ff6a88, #ff2e63);
   color: white;
-  padding: 10px 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  padding: 10px 18px;
+  box-shadow: 0 2px 6px rgba(255, 30, 80, 0.3);
   position: sticky;
   top: 0;
   z-index: 1000;
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
 }
 
 .app-logo {
@@ -55,21 +53,22 @@ body.dark-mode {
 }
 
 .app-actions button {
-  background: rgba(255,255,255,0.15);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  background: rgba(255,255,255,0.25);
   border: none;
-  font-size: 20px;
+  color: white;
+  font-size: 18px;
   padding: 6px 10px;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.25s, transform 0.15s;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.1s;
 }
 .app-actions button:hover {
-  background: rgba(255,255,255,0.35);
-  transform: scale(1.15);
+  background: rgba(255,255,255,0.4);
+  transform: scale(1.1);
 }
 
 .dark-toggle label {
@@ -78,9 +77,10 @@ body.dark-mode {
   margin-left: 4px;
 }
 
+/* Dark mode header */
 body.dark-mode .app-header {
   background: linear-gradient(90deg, #2b2b2b, #3a2329);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 /* ----------------------- PODPANEL STRÁNKY ----------------------- */
@@ -94,8 +94,6 @@ body.dark-mode .app-header {
   position: sticky;
   top: 52px;
   z-index: 900;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
 }
 
 .page-header h3 {
@@ -148,16 +146,21 @@ body.dark-mode .back-btn:hover {
 
 /* ----------------------- TLAČÍTKA ----------------------- */
 button {
-  padding: 8px 16px;
-  border-radius: 12px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  padding: 7px 14px;
+  border-radius: 8px;
   border: 1px solid #ff7a9c;
   background: linear-gradient(180deg, #ff8fa8, #ff5e82);
   color: white;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.3s, transform 0.1s, box-shadow 0.2s;
-  box-shadow: 0 2px 6px rgba(255, 60, 100, 0.3);
+  box-shadow: 0 2px 4px rgba(255, 60, 100, 0.3);
 }
+
 button:hover {
   background: linear-gradient(180deg, #ff7191, #ff3e69);
   transform: scale(1.03);
@@ -186,12 +189,11 @@ body.dark-mode button:hover {
 }
 
 input[type="text"], input[type="number"] {
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid #ffb1c4;
-  padding: 6px 10px;
+  padding: 6px 8px;
   background: #fff8fa;
   color: #3b0a1e;
-  transition: all 0.3s;
 }
 input[type="text"]:focus, input[type="number"]:focus {
   outline: 2px solid #ff7191;
@@ -212,25 +214,28 @@ body.dark-mode input, body.dark-mode select {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 10px;
+  padding: 4px 0; /* menší vertikální padding */
 }
 
 .patternSpan {
-  margin-left: 10px;
   flex: 1;
-  border-radius: 12px;
-  padding: 12px 14px;
+  margin-left: 10px;
+  border: 1px solid #ffc0d0; 
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  background: #fff;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  justify-content: center;
+  height: 36px;             /* stejná výška jako steps */
+  line-height: 36px;        /* vertikální centrování textu */
+  transition: all 0.2s;
+  background: #fff4f7;
+  font-weight: 500;
 }
+
 .patternSpan:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-  background-color: #ffe6ec;
+  background-color: #ffdbe6;
+  transform: scale(1.02);
 }
 
 .deleteBtn {
@@ -239,83 +244,89 @@ body.dark-mode input, body.dark-mode select {
   color: #c8002a;
   font-size: 16px;
   cursor: pointer;
-  width: 40px;
-  margin-left: auto;
+  width: 36px;
+  height: 36px;
+  margin-left: 6px;
   border-radius: 6px;
-  transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
 }
 .deleteBtn:hover {
   color: #ff003c;
   background: #ffd0da;
 }
 
+/* Dark mode patterny */
+body.dark-mode .patternSpan {
+  background: #2a2a2a;
+  border: 1px solid #555;
+  color: #ccc;
+}
 body.dark-mode .patternSpan:hover {
-  background-color: #333;
+  background: #3a3a3a;
 }
 body.dark-mode .deleteBtn {
   color: #ff6b6b;
 }
 body.dark-mode .deleteBtn:hover {
   color: #ff3333;
+  background: #55000022;
 }
 
 /* ----------------------- KROKY ----------------------- */
 #patternContainer {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px; /* oddělení od Add/Remove tlačítek */
+  gap: 4px; 
+  margin-top: 8px;
   margin-bottom: 10px;
 }
 
 .step { 
   flex: 1 1 80px;
   text-align: center;
-  border-radius: 8px;
-  padding: 0 12px;       /* odstraněn vertikální padding */
-  height: 36px;           /* stejná výška jako běžné tlačítko */
-  line-height: 36px;      /* vertikální centrování textu */
+  border: 1px solid #ffb3c4; 
+  padding: 0 12px;
+  border-radius: 8px; 
   cursor: pointer;
-  background: #fdf0f4;
-  border: 1px solid #ffb3c4;
+  height: 36px;
+  line-height: 36px;
+  background: #fff4f7;
+  font-weight: 500;
   transition: all 0.2s;
 }
 
 .step:hover {
   background-color: #ffdbe6;
-  transform: scale(1.03);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
 }
 
 .step.active {
   border: 2px solid #ff2e63;
-  background-color: #ff89a7;
+  background: linear-gradient(145deg, #ff6a88, #ff2e63);
   color: white;
   font-weight: 600;
 }
 
-/* ----------------------- KROKY - DARK MODE ----------------------- */
 body.dark-mode .step {
-  background: #2a2a2a;       /* tmavé pozadí */
-  border: 1px solid #555;    /* tmavší ohraničení */
-  color: #ccc;               /* světlejší text */
+  background: #2a2a2a;
+  border-color: #555;
+  color: #ccc;
 }
-
-body.dark-mode .step:hover {
-  background: #3a3a3a;       /* světlejší při hover */
-}
-
 body.dark-mode .step.active {
-  background: linear-gradient(145deg, #ff6a88, #ff2e63); /* jasný kontrast aktivního kroku */
-  border: 2px solid #ff5877;
+  background: linear-gradient(145deg, #5c1e2b, #ff5877);
+  border-color: #ff5877;
   color: white;
-  box-shadow: 0 4px 10px rgba(255,46,99,0.4);
 }
 
 /* ----------------------- SLIDERY ----------------------- */
 #controls div {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   margin-bottom: 6px;
 }
 
@@ -329,25 +340,29 @@ body.dark-mode .step.active {
 
 #controls input[type="range"] {
   -webkit-appearance: none;
-  width: 100%;
-  height: 8px;
-  border-radius: 6px;
-  background: #ffd1da;
-  outline: none;
-  transition: background 0.3s;
+  -moz-appearance: none;
+  appearance: none;
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: #ffc0d0;
 }
+
 #controls input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
+  appearance: none;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: #ff2e63;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-  transition: transform 0.15s;
 }
-#controls input[type="range"]::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
+#controls input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ff2e63;
+  cursor: pointer;
 }
 
 #controls span {
@@ -357,19 +372,16 @@ body.dark-mode .step.active {
 
 /* ----------------------- JSON PANEL ----------------------- */
 #output {
-  background: #fff;
-  border-radius: 12px;
-  padding: 12px;
-  border: 1px solid #ffd1da;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  background: #fff6f9;
+  padding: 10px;
+  border-radius: 8px;
   overflow-x: auto;
   max-height: 300px;
-  font-family: 'Fira Code', monospace;
+  border: 1px solid #ffc0d0;
 }
 body.dark-mode #output {
   background: #1e1e1e;
   border-color: #444;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
 /* ----------------------- MOBIL ----------------------- */
@@ -387,7 +399,7 @@ body.dark-mode #output {
     flex-direction: column;
     align-items: stretch;
   }
-  button {
+  button, .step, .patternSpan {
     width: 100%;
     font-size: 1.05em;
   }
