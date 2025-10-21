@@ -141,8 +141,14 @@ function updateActiveStep() {
 }
 
 // eventy Name a Description
-document.getElementById('formulaName').addEventListener('input', () => { isDirty = true; });
-document.getElementById('formulaDesc').addEventListener('input', () => { isDirty = true; });
+document.getElementById('formulaName').addEventListener('input', () => { 
+  isDirty = true;
+  drawGraph(); // aktualizace JSON preview
+});
+document.getElementById('formulaDesc').addEventListener('input', () => { 
+  isDirty = true;
+  drawGraph(); // aktualizace JSON preview
+});
 
 // eventy sliderů a checkboxů
 document.getElementById('posSlider').addEventListener('input', updateActiveStep);
