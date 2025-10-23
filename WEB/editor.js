@@ -196,6 +196,47 @@ function simulateMotion(startPos, targetPos, maxSpeed, accel, stepTime = 0.01) {
   return points;
 }
 
+// připojení eventů pro klikání na graf
+function attachChartClick(chart, dataset) {
+  const canvas = chart.canvas;
+
+  function getRelativePosition(evt) {
+    const rect = canvas.getBoundingClientRect();
+    let x, y;
+
+    if (evt.touches) { // touch event
+      x = evt.touches[0].clientX - rect.left;
+      y = evt.touches[0].clientY - rect.top;
+    } else { // mouse event
+      x = evt.clientX - rect.left;
+      y = evt.clientY - rect.top;
+    }
+
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    return { x: x * scaleX, y: y * scaleY };
+  }
+
+  function handleClick(evt) {
+    evt.preventDefault();
+    const pos = getRelativePosition(evt);
+
+    const points = chart.getElementsAtEventForMode({ 
+      clientX: evt.clientX || (evt.touches && evt.touches[0].clientX), 
+      clientY: evt.clientY || (evt.touches && evt.touches[0].clientY)
+    }, 'nearest', { intersect: false }, false);
+
+    if (points.length) {
+      const idx = points[0].index;
+      const stepIdx = dataset[idx].stepIdx;
+      setActiveStep(stepIdx);
+    }
+  }
+
+  canvas.addEventListener('click', handleClick);
+  canvas.addEventListener('touchstart', handleClick);
+}
+
 // vykreslení grafu
 function drawGraph() {
   const MAX_SPEED_ABS = 100;   // reálná maximální rychlost (steps/s)
@@ -314,7 +355,7 @@ function drawGraph() {
           data: upperBand,
           borderWidth: 0,
           pointRadius: 0,
-          backgroundColor: 'rgba(0, 0, 255, 0.15)',
+          backgroundColor: 'rgba(255, 0, 106, 0.35)',
           fill: '-1', // vyplň mezi horní a spodní křivkou
         },
         // hlavní trajektorie polohy motoru – až po oblasti RANDOMIZE
@@ -360,17 +401,9 @@ function drawGraph() {
           }, {})
         }
       },
-      // klikání na graf pro výběr kroku
-      onClick: (evt) => {
-        const points = chart.getElementsAtEventForMode(evt, 'nearest', { intersect: false }, false);
-        if (points.length) {
-          const idx = points[0].index;
-          const stepIdx = dataset[idx].stepIdx;
-          setActiveStep(stepIdx);
-        }
-      }
     }
   });
+  attachChartClick(chart, dataset);
 }
 
 
