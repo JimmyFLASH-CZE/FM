@@ -141,11 +141,11 @@ function updateActiveStep() {
 }
 
 // eventy Name a Description
-document.getElementById('formulaName').addEventListener('input', () => { 
+document.getElementById('formulaName').addEventListener('input', () => {
   isDirty = true;
   drawGraph(); // aktualizace JSON preview
 });
-document.getElementById('formulaDesc').addEventListener('input', () => { 
+document.getElementById('formulaDesc').addEventListener('input', () => {
   isDirty = true;
   drawGraph(); // aktualizace JSON preview
 });
@@ -198,6 +198,9 @@ function simulateMotion(startPos, targetPos, maxSpeed, accel, stepTime = 0.01) {
 
 // vykreslení grafu
 function drawGraph() {
+  const MAX_SPEED_ABS = 100;   // reálná maximální rychlost (steps/s)
+  const MAX_ACCEL_ABS = 300;  // reálné max. zrychlení (steps/s²)
+
   let dataset = [];
   let upperBand = []; // horní hranice náhodného rozsahu
   let lowerBand = []; // dolní hranice náhodného rozsahu
@@ -209,7 +212,10 @@ function drawGraph() {
     const prevRand = idx === 0 ? pattern[pattern.length - 1].randomizePercent : pattern[idx - 1].randomizePercent;
     const currRand = step.randomizePercent;
 
-    const segment = simulateMotion(startPos, step.targetPosPercent, step.speedPercent, step.accelPercent);
+    const speed = (step.speedPercent / 100) * MAX_SPEED_ABS;
+    const accel = (step.accelPercent / 100) * MAX_ACCEL_ABS;
+    const segment = simulateMotion(startPos, step.targetPosPercent, speed, accel);
+    //const segment = simulateMotion(startPos, step.targetPosPercent, step.speedPercent, step.accelPercent);
     const n = segment.length;
 
     // Výpočet start a end bodů Randomize
@@ -294,37 +300,37 @@ function drawGraph() {
     type: 'line',
     data: {
       datasets: [
-      // spodní hranice náhodného rozsahu
-      {
-        label: 'Min range',
-        data: lowerBand,
-        borderWidth: 0,
-        pointRadius: 0,
-        fill: '+1', // vyplň mezi tímto a dalším datasetem
-      },
-      // horní hranice náhodného rozsahu + průhledná výplň
-      {
-        label: 'Max range',
-        data: upperBand,
-        borderWidth: 0,
-        pointRadius: 0,
-        backgroundColor: 'rgba(0, 0, 255, 0.15)',
-        fill: '-1', // vyplň mezi horní a spodní křivkou
-      },
-      // hlavní trajektorie polohy motoru – až po oblasti RANDOMIZE
-      {
-        label: 'Poloha motoru (%)',
-        data: dataset,
-        fill: false,
-        tension: 0.3,
-        borderWidth: 3,
-        pointRadius: 0,
-        clip: false,
-        segment: {
-          borderColor: ctx => ctx.p0.parsed.stepIdx === activeIndex ? 'blue' : 'gray'
+        // spodní hranice náhodného rozsahu
+        {
+          label: 'Min range',
+          data: lowerBand,
+          borderWidth: 0,
+          pointRadius: 0,
+          fill: '+1', // vyplň mezi tímto a dalším datasetem
+        },
+        // horní hranice náhodného rozsahu + průhledná výplň
+        {
+          label: 'Max range',
+          data: upperBand,
+          borderWidth: 0,
+          pointRadius: 0,
+          backgroundColor: 'rgba(0, 0, 255, 0.15)',
+          fill: '-1', // vyplň mezi horní a spodní křivkou
+        },
+        // hlavní trajektorie polohy motoru – až po oblasti RANDOMIZE
+        {
+          label: 'Poloha motoru (%)',
+          data: dataset,
+          fill: false,
+          tension: 0.3,
+          borderWidth: 3,
+          pointRadius: 0,
+          clip: false,
+          segment: {
+            borderColor: ctx => ctx.p0.parsed.stepIdx === activeIndex ? 'blue' : 'gray'
+          }
         }
-      }
-    ]
+      ]
     },
     options: {
       responsive: false,
