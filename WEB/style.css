@@ -308,8 +308,7 @@ body.dark-mode select {
 }
 
 .patternSpan:hover {
-  /* background-color: #ffdbe6; */
-  background: linear-gradient(145deg, #5c1e2b, #ff5877);
+  background: linear-gradient(145deg, #ffdbe6, #ff5877);
   transform: scale(1.02);
 }
 
@@ -385,8 +384,8 @@ body.dark-mode .deleteBtn:hover {
 }
 
 .step.active {
-  border: 2px solid #ff2e63;
-  background: linear-gradient(145deg, #5c1e2b, #ff5877);
+  border: 1px solid #ff2e63;
+  background: linear-gradient(145deg, #ffdbe6, #ff5877);
   color: white;
   font-weight: 600;
 }
@@ -426,7 +425,11 @@ body.dark-mode .step.active {
   flex: 1;
   height: 6px;
   border-radius: 3px;
-  background: #ffc0d0;
+  /* background: #ffc0d0; */
+  background: linear-gradient(90deg, #ffb1c4 0%, #ff5e82 100%);
+  outline: none;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
 #controls input[type="range"]::-webkit-slider-thumb {
@@ -437,6 +440,8 @@ body.dark-mode .step.active {
   border-radius: 50%;
   background: #ff2e63;
   cursor: pointer;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s;
 }
 
 #controls input[type="range"]::-moz-range-thumb {
@@ -447,9 +452,109 @@ body.dark-mode .step.active {
   cursor: pointer;
 }
 
+#controls input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+#controls input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #ff5e82 0%, #ffb1c4 100%);
+}
+
+#controls input[type="range"]::-moz-range-progress {
+  background: linear-gradient(90deg, #ff2e63 0%, #ff8fa8 100%);
+  height: 6px;
+  border-radius: 3px;
+}
+
+/* Dark mode varianta */
+body.dark-mode #controls input[type="range"] {
+  background: linear-gradient(90deg, #3a2a2d 0%, #ff5e82 100%);
+}
+
+/*
+body.dark-mode #controls input[type="range"]::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, #4a2028 0%, #70303b 100%);
+}
+
+*/
+body.dark-mode #controls input[type="range"]::-moz-range-track {
+  background: linear-gradient(90deg, #4a2028 0%, #70303b 100%);
+}
+
+body.dark-mode #controls input[type="range"]::-moz-range-progress {
+  background: linear-gradient(90deg, #ff5e82 0%, #ffb1c4 100%);
+}
+
 #controls span {
   width: 40px;
   text-align: left;
+}
+
+/* === AUX TOGGLE SWITCHES === */
+.aux-switches {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.aux-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #9c0b3a;
+}
+
+.aux-toggle input {
+  display: none;
+}
+
+.aux-toggle .slider {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  background: #ffd3dc;
+  border-radius: 20px;
+  transition: background 0.3s;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.15);
+}
+
+.aux-toggle .slider::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.3s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.aux-toggle input:checked + .slider {
+  background: linear-gradient(145deg, #ff5877, #ff2e63);
+}
+
+.aux-toggle input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+/* Dark mode */
+body.dark-mode .aux-toggle {
+  color: #eee;
+}
+
+body.dark-mode .aux-toggle .slider {
+  background: #444;
+}
+
+body.dark-mode .aux-toggle input:checked + .slider {
+  background: linear-gradient(145deg, #5c1e2b, #ff5877);
 }
 
 /* ----------------------- JSON PANEL ----------------------- */
