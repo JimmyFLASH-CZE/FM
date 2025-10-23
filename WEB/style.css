@@ -557,6 +557,28 @@ body.dark-mode .aux-toggle input:checked + .slider {
   background: linear-gradient(145deg, #5c1e2b, #ff5877);
 }
 
+/* AUX + Delay responsivní úprava */
+@media (max-width: 600px) {
+  /* hlavní řádek: Delay + AUX container */
+  #controls > div {
+    display: flex;
+    flex-wrap: wrap; /* umožní zalomení */
+    align-items: center;
+    gap: 10px;
+  }
+
+  .aux-switches {
+    display: flex;
+    flex-wrap: wrap; /* pokud se nevejdou, zalomí na nový řádek */
+    gap: 10px;
+    flex: none; /* nepřekrývat prostor Delay */
+  }
+
+  .aux-toggle {
+    flex: none; /* zachovat velikost switche */
+  }
+}
+
 /* ----------------------- JSON PANEL ----------------------- */
 #output {
   background: #fff6f9;
