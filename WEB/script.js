@@ -1,3 +1,5 @@
+// === SCRIPTY PRO index.html ===
+
 let patternFiles = [];
 
 // zavolání při načtení stránky

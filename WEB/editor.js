@@ -1,4 +1,4 @@
-// ********************************************************** js pro editor vzorců **************************
+// === SCRIPTY PRO EDITOR VZORCŮ ===
 
 let pattern = [];
 let chart;
@@ -53,7 +53,7 @@ function initPattern() {
   drawGraph();
 }
 
-// vykreslení kroků do UI
+// vykreslení tlačítek kroků 
 function renderSteps() {
   const container = document.getElementById('patternContainer');
   container.innerHTML = "";
@@ -66,7 +66,7 @@ function renderSteps() {
   });
 }
 
-// přidání kroku s random pozicí
+// event přidání kroku s random pozicí
 function addStep() {
   if (activeIndex < 0) activeIndex = 0;
 
@@ -86,7 +86,7 @@ function addStep() {
   drawGraph();
 }
 
-// odebrání aktivního kroku
+// event odebrání aktivního kroku
 function removeStep() {
   if (pattern.length <= 2 || activeIndex < 0) return;
   pattern.splice(activeIndex, 1);
@@ -96,7 +96,7 @@ function removeStep() {
   drawGraph();
 }
 
-// nastavení aktivního kroku
+// event nastavení aktivního kroku
 function setActiveStep(idx) {
   if (idx < 0 || idx >= pattern.length) return;
   activeIndex = idx;
@@ -121,25 +121,6 @@ function setActiveStep(idx) {
   drawGraph();
 }
 
-// aktualizace aktivního kroku při změně sliderů/checkboxů
-function updateActiveStep() {
-  if (activeIndex < 0) return;
-  const step = pattern[activeIndex];
-  step.targetPosPercent = parseInt(document.getElementById('posSlider').value);
-  step.speedPercent = parseInt(document.getElementById('speedSlider').value);
-  step.accelPercent = parseInt(document.getElementById('accelSlider').value);
-  step.randomizePercent = parseInt(document.getElementById('randomSlider').value);
-  step.aux1 = document.getElementById('aux1Box').checked;
-  step.aux2 = document.getElementById('aux2Box').checked;
-  step.partDelay = parseInt(document.getElementById('delayInput').value);
-  document.getElementById('posVal').textContent = step.targetPosPercent;
-  document.getElementById('speedVal').textContent = step.speedPercent;
-  document.getElementById('accelVal').textContent = step.accelPercent;
-  document.getElementById('randomVal').textContent = step.randomizePercent;
-  drawGraph();
-  isDirty = true; // označit jako změněné
-}
-
 // eventy Name a Description
 document.getElementById('formulaName').addEventListener('input', () => {
   isDirty = true;
@@ -158,6 +139,25 @@ document.getElementById('randomSlider').addEventListener('input', updateActiveSt
 document.getElementById('aux1Box').addEventListener('change', updateActiveStep);
 document.getElementById('aux2Box').addEventListener('change', updateActiveStep);
 document.getElementById('delayInput').addEventListener('input', updateActiveStep);
+
+// aktualizace aktivního kroku při změně sliderů/checkboxů
+function updateActiveStep() {
+  if (activeIndex < 0) return;
+  const step = pattern[activeIndex];
+  step.targetPosPercent = parseInt(document.getElementById('posSlider').value);
+  step.speedPercent = parseInt(document.getElementById('speedSlider').value);
+  step.accelPercent = parseInt(document.getElementById('accelSlider').value);
+  step.randomizePercent = parseInt(document.getElementById('randomSlider').value);
+  step.aux1 = document.getElementById('aux1Box').checked;
+  step.aux2 = document.getElementById('aux2Box').checked;
+  step.partDelay = parseInt(document.getElementById('delayInput').value);
+  document.getElementById('posVal').textContent = step.targetPosPercent;
+  document.getElementById('speedVal').textContent = step.speedPercent;
+  document.getElementById('accelVal').textContent = step.accelPercent;
+  document.getElementById('randomVal').textContent = step.randomizePercent;
+  drawGraph();
+  isDirty = true; // označit jako změněné
+}
 
 // simulace trapezoidního profilu s jemným zastavením
 function simulateMotion(startPos, targetPos, maxSpeed, accel, stepTime = 0.01) {
@@ -317,7 +317,7 @@ function drawGraph() {
           backgroundColor: 'rgba(255, 0, 106, 0.35)',
           fill: '-1', // vyplň mezi horní a spodní křivkou
         },
-        // hlavní trajektorie polohy motoru – až po oblasti RANDOMIZE
+        // hlavní trajektorie polohy motoru
         {
           label: 'Poloha motoru (%)',
           data: dataset,
@@ -408,7 +408,7 @@ window.onload = () => {
 async function saveToJson() {
   const name = document.getElementById('formulaName').value.trim();
   if (!name) {
-    alert("Fill the pattern name!");
+    showStatusModal("Fill in the pattern name.", true);
     return;
   }
 
@@ -435,10 +435,10 @@ async function saveToJson() {
     });
 
     const text = await res.text();
-    alert(text); // potvrzení uživateli
+    showStatusModal(text); // potvrzení uživateli
     isDirty = false; // reset sledovače změn
   } catch (err) {
-    alert("Save pattern error: " + (err.message || err));
+    showStatusModal("Save pattern error: " + (err.message || err), true);
   }
 }
 
@@ -446,7 +446,7 @@ async function saveToJson() {
 function exportPattern() {
   const name = document.getElementById('formulaName').value.trim();
   if (!name) {
-    alert("Fill the pattern name!");
+    showStatusModal("Fill the pattern name!", true);
     return;
   }
 
@@ -480,3 +480,30 @@ function exportPattern() {
   }, 100);
 }
 
+// === Pomocná funkce pro zobrazení modální zprávy ===
+function showStatusModal(message, isError = false) {
+  // Pokud už modal existuje, odstraníme ho
+  const oldModal = document.querySelector('.status-modal');
+  if (oldModal) oldModal.remove();
+
+  // Vytvoření modalu
+  const modal = document.createElement('div');
+  modal.className = 'login-modal status-modal'; // využijeme stejný styl jako login modal
+  modal.innerHTML = `
+    <div class="login-box ${isError ? 'error' : ''}">
+      <p>${message}</p>
+      <div class="login-buttons">
+        <button id="statusOk">OK</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  // zobrazit modal
+  modal.classList.remove('hidden');
+
+  // po kliknutí na OK zavřít modal
+  modal.querySelector('#statusOk').addEventListener('click', () => {
+    modal.remove();
+  });
+}

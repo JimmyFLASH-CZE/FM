@@ -1,4 +1,4 @@
-<!-- 2025-10-21 -->
+<!-- editor.html -->
 <!DOCTYPE html>
 <html lang="cs">
 
@@ -48,9 +48,9 @@
     </div>
 
     <!-- Ovládací tlačítka kroků -->
-    <div class="step-controls">
-      <button onclick="addStep()">Add step</button>
-      <button onclick="removeStep()">Remove step</button>
+    <div class="step-buttons">
+      <button class="step-btn add" title="Add new step behind selected" onclick="addStep()">➕</button>
+      <button class="step-btn remove" title="Remove selected step" onclick="removeStep()">➖</button>
     </div>
 
     <!-- Kroková tlačítka -->
@@ -78,11 +78,12 @@
         <input type="range" id="randomSlider" min="0" max="100" value="0">
         <span id="randomVal">0</span>%
       </div>
-      
+
       <div style="display:flex; flex-direction:row ; align-items: center;">
         <div style="flex:1;">
           <label class="slider-label">Delay (ms): </label>
-          <input type="number" id="delayInput" name="delay" autocomplete="off" min="0" value="0" style="max-width:60px; margin-right:10px;">
+          <input type="number" id="delayInput" name="delay" min="0" max="65535" value="0"
+            style="max-width:60px; margin-right:10px;">
         </div>
         <div class="aux-switches">
           <label class="aux-toggle">
@@ -104,8 +105,8 @@
     <canvas id="motorChart" width="800" height="400" style="width:100%;max-width:800px;height:auto;"></canvas>
 
     <!-- Export -->
-    <div style="text-align:right;margin-top:10px;margin-bottom:50px;">
-      <button onclick="exportPattern()">Export</button>
+    <div style="text-align:right;margin-top:10px;margin-bottom:10px;">
+      <button onclick="exportPattern()">⇩ Export</button>
     </div>
 
     <!-- JSON -->

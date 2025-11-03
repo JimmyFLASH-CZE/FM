@@ -1,4 +1,4 @@
-/* === LOGIN MODAL === */
+/* ----------------------- LOGIN ----------------------- */
 .login-modal {
   position: fixed;
   inset: 0;
@@ -44,7 +44,11 @@
   margin-top: 15px;
 }
 
-/* DARK MODE */
+.status-modal .login-buttons {
+  justify-content: center;
+}
+
+/* DARK MODE - LOGIN */
 body.dark-mode .login-box {
   background: #1f1f1f;
   color: #eee;
@@ -58,7 +62,7 @@ body.dark-mode .login-box input {
 }
 
 
-/* ----------------------- ZÁKLAD ----------------------- */
+/* ----------------------- BACKGROUND ----------------------- */
 body {
   background: linear-gradient(180deg, #fff0f4 0%, #ffe5ec 100%);
   font-family: "Segoe UI", sans-serif;
@@ -139,13 +143,13 @@ body.dark-mode {
   margin-left: 4px;
 }
 
-/* Dark mode header */
+/* DARK MODE - HORNÍ PANEL */
 body.dark-mode .app-header {
   background: linear-gradient(90deg, #2b2b2b, #3a2329);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-/* ----------------------- PODPANEL STRÁNKY ----------------------- */
+/* ----------------------- PODPANEL ----------------------- */
 .page-header {
   display: flex;
   align-items: center;
@@ -180,6 +184,7 @@ body.dark-mode .app-header {
   transform: scale(1.05);
 }
 
+/* DARK MODE - PODPANEL */
 body.dark-mode .page-header {
   background: #2a2a2a;
   border-color: #444;
@@ -195,7 +200,10 @@ body.dark-mode .back-btn:hover {
   background: #3a3a3a;
 }
 
-/* ----------------------- OBSAH ----------------------- */
+/* ===================================================== */
+/* ======================= OBSAH ======================= */
+/* ===================================================== */
+
 .page-content {
   padding: 18px;
   max-width: 900px;
@@ -207,73 +215,6 @@ body.dark-mode .back-btn:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-}
-
-/* ----------------------- TLAČÍTKA ----------------------- */
-button {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-
-  padding: 7px 14px;
-  border-radius: 8px;
-  border: 1px solid #ff7a9c;
-  background: linear-gradient(180deg, #ff8fa8, #ff5e82);
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.1s, box-shadow 0.2s;
-  box-shadow: 0 2px 4px rgba(255, 60, 100, 0.3);
-}
-
-button:hover {
-  background: linear-gradient(180deg, #ff7191, #ff3e69);
-  transform: scale(1.03);
-}
-
-body.dark-mode button {
-  background: linear-gradient(180deg, #3a2a2d, #4a2028);
-  border-color: #553;
-  color: #eaeaea;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-}
-
-body.dark-mode button:hover {
-  background: linear-gradient(180deg, #4c3035, #5c202a);
-}
-
-/* ----------------------- ŘÁDKY S NAME/DESC ----------------------- */
-.name-line,
-.desc-line {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 10px 0;
-}
-
-.name-line button {
-  margin-left: 8px;
-}
-
-input[type="text"],
-input[type="number"] {
-  border-radius: 6px;
-  border: 1px solid #ffb1c4;
-  padding: 6px 8px;
-  background: #fff8fa;
-  color: #3b0a1e;
-}
-
-input[type="text"]:focus,
-input[type="number"]:focus {
-  outline: 2px solid #ff7191;
-}
-
-body.dark-mode input,
-body.dark-mode select {
-  background: #1e1e1e;
-  color: #eee;
-  border: 1px solid #555;
 }
 
 /* ----------------------- PATTERN LIST ----------------------- */
@@ -354,6 +295,113 @@ body.dark-mode .deleteBtn:hover {
   background: #55000022;
 }
 
+/* ----------------------- TLAČÍTKA ----------------------- */
+button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid #ff7a9c;
+  background: linear-gradient(180deg, #ff8fa8, #ff5e82);
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 2px 4px rgba(255, 60, 100, 0.3);
+}
+
+button:hover {
+  background: linear-gradient(180deg, #ff7191, #ff3e69);
+  transform: scale(1.03);
+}
+
+body.dark-mode button {
+  background: linear-gradient(180deg, #3a2a2d, #4a2028);
+  border-color: #553;
+  color: #eaeaea;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode button:hover {
+  background: linear-gradient(180deg, #4c3035, #5c202a);
+}
+
+/* ----------------------- ŘÁDKY S NAME/DESC ----------------------- */
+.name-line,
+.desc-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.name-line button {
+  margin-left: 8px;
+}
+
+input[type="text"],
+input[type="number"] {
+  border-radius: 6px;
+  border: 1px solid #ffb1c4;
+  padding: 6px 8px;
+  background: #fff8fa;
+  color: #3b0a1e;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+  outline: 2px solid #ff7191;
+}
+
+body.dark-mode input,
+body.dark-mode select {
+  background: #1e1e1e;
+  color: #eee;
+  border: 1px solid #555;
+}
+
+/* ----------------------- STEP BUTTONS + and - ----------------------- */
+/* === Step buttons container === */
+.step-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* === General style for + and − buttons === */
+.step-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.step-btn {
+  width: 36px;
+  height: 36px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.1s ease;
+}
+
+.step-btn.add:hover {
+  color: #4caf50; /* jemná zelená pro plus */
+}
+
+.step-btn.remove:hover {
+  color: #e53935; /* jemná červená pro minus */
+}
+
+.step-btn:active {
+  transform: scale(0.9);
+}
+
 /* ----------------------- KROKY ----------------------- */
 #patternContainer {
   display: flex;
@@ -425,7 +473,6 @@ body.dark-mode .step.active {
   flex: 1;
   height: 6px;
   border-radius: 3px;
-  /* background: #ffc0d0; */
   background: linear-gradient(90deg, #ffb1c4 0%, #ff5e82 100%);
   outline: none;
   cursor: pointer;
@@ -468,17 +515,11 @@ body.dark-mode .step.active {
   border-radius: 3px;
 }
 
-/* Dark mode varianta */
+/* DARK MODE - SLIDERY */
 body.dark-mode #controls input[type="range"] {
   background: linear-gradient(90deg, #3a2a2d 0%, #ff5e82 100%);
 }
 
-/*
-body.dark-mode #controls input[type="range"]::-webkit-slider-runnable-track {
-  background: linear-gradient(90deg, #4a2028 0%, #70303b 100%);
-}
-
-*/
 body.dark-mode #controls input[type="range"]::-moz-range-track {
   background: linear-gradient(90deg, #4a2028 0%, #70303b 100%);
 }
@@ -492,7 +533,7 @@ body.dark-mode #controls input[type="range"]::-moz-range-progress {
   text-align: left;
 }
 
-/* === AUX TOGGLE SWITCHES === */
+/* ----------------------- AUX TOGGLE SWITCHES ----------------------- */
 .aux-switches {
   display: flex;
   gap: 20px;
@@ -544,7 +585,7 @@ body.dark-mode #controls input[type="range"]::-moz-range-progress {
   transform: translateX(20px);
 }
 
-/* Dark mode */
+/* DARK MODE - AUX TOGGLE SWITCHES */
 body.dark-mode .aux-toggle {
   color: #eee;
 }

@@ -8,7 +8,7 @@ const pageContent = document.querySelector('.page-content');
 // --- Obsah stránky zablokován dokud není login ---
 pageContent.style.display = "none";
 
-// --- Vytvoření modal okna (initial hidden) ---
+// --- Vytvoření login modal okna (initial hidden) ---
 const loginModal = document.createElement('div');
 loginModal.className = 'login-modal hidden';
 loginModal.innerHTML = `
@@ -23,6 +23,35 @@ loginModal.innerHTML = `
 `;
 document.body.appendChild(loginModal);
 
+// --- Vytvoření status modal okna ---
+const statusModal = document.createElement('div');
+statusModal.className = 'login-modal status-modal hidden';
+statusModal.innerHTML = `
+  <div class="login-box">
+    <h3 id="statusTitle"></h3>
+    <p id="statusMessage"></p>
+    <div class="login-buttons">
+      <button id="statusOk">OK</button>
+    </div>
+  </div>
+`;
+document.body.appendChild(statusModal);
+
+// --- Funkce pro zobrazení status modalu ---
+function showStatus(title, message, callback) {
+  document.getElementById('statusTitle').textContent = title;
+  document.getElementById('statusMessage').textContent = message;
+  statusModal.classList.remove('hidden');
+
+  const okBtn = document.getElementById('statusOk');
+  const closeHandler = () => {
+    statusModal.classList.add('hidden');
+    okBtn.removeEventListener('click', closeHandler);
+    if (callback) callback();
+  };
+  okBtn.addEventListener('click', closeHandler);
+}
+
 // --- Funkce pro odblokování stránky po přihlášení ---
 function unlockPage() {
   isLoggedIn = true;
@@ -30,6 +59,14 @@ function unlockPage() {
   pageContent.style.display = "";
   loginModal.classList.add('hidden');
   sessionStorage.setItem('isLoggedIn', 'true');
+}
+
+// --- Funkce pro odhlášení ---
+function lockPage() {
+  isLoggedIn = false;
+  loginBtn.textContent = "🔒";
+  pageContent.style.display = "none";
+  sessionStorage.removeItem('isLoggedIn');
 }
 
 // --- Kontrola uloženého přihlášení při načtení ---
@@ -43,16 +80,13 @@ window.addEventListener('load', () => {
   }
 });
 
-// --- Zobrazení modal při kliknutí ---
+// --- Kliknutí na login/logout tlačítko ---
 loginBtn.addEventListener('click', () => {
   if (isLoggedIn) {
-    if (confirm("Do you want to log out?")) {
-      isLoggedIn = false;
-      loginBtn.textContent = "🔒";
-      pageContent.style.display = "none";
-      sessionStorage.removeItem('isLoggedIn');
-    }
+    // --- tichý logout bez modalu ---
+    lockPage();
   } else {
+    // --- zobraz login modal ---
     loginModal.classList.remove('hidden');
     loginModal.querySelector('#loginPassword').value = "";
     loginModal.querySelector('#loginPassword').focus();
@@ -67,12 +101,15 @@ loginModal.querySelector('#loginCancel').addEventListener('click', () => {
 // --- Submit button ---
 loginModal.querySelector('#loginSubmit').addEventListener('click', async () => {
   const password = loginModal.querySelector('#loginPassword').value.trim();
-  if (!password) return alert("Please enter a password.");
+  if (!password) {
+    showStatus("Error", "Please enter a password.");
+    return;
+  }
 
   // --- TEST ADMIN PASSWORD ---
   if (password === "111213") {
     unlockPage();
-    alert("Admin login successful (test mode).");
+    showStatus("Login successful", "Admin login successful (test mode).");
     return;
   }
 
@@ -86,12 +123,12 @@ loginModal.querySelector('#loginSubmit').addEventListener('click', async () => {
     const data = await res.json();
     if (data.success) {
       unlockPage();
-      alert("Login successful!");
+      showStatus("Login successful", "Access granted.");
     } else {
-      alert("Incorrect password.");
+      showStatus("Login failed", "Incorrect password.");
     }
   } catch (err) {
-    alert("Cannot reach ESP device.");
+    showStatus("Connection error", "Cannot reach ESP device.");
     console.error(err);
   }
 });
