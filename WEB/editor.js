@@ -473,11 +473,7 @@ async function testPattern() {
 
     // 2️⃣ Spustí pattern na ESP
     modal.update("🔄 Sending pattern to ESP...");
-    const resRun = await fetch("/runPattern", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: "!EditorLatestTest" })
-    });
+    const resRun = await fetch("/runPattern", { method: "POST", body: "!EditorLatestTest" });
 
     modal.update("✅ Test pattern uploaded and started.");
   } catch (err) {
