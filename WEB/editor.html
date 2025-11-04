@@ -40,11 +40,12 @@
     <div class="name-line">
       <label class="slider-label">Name:</label>
       <input type="text" id="formulaName" maxlength="19" style="flex:1;">
-      <button id="saveBtn" onclick="saveToJson()">💾 Save</button>
+      <button id="saveBtn" class="action-btn" title="Save" onclick="saveToJson()">💾 Save</button>
     </div>
     <div class="desc-line">
       <label class="slider-label">Description:</label>
       <input type="text" id="formulaDesc" maxlength="42" style="flex:1;">
+      <button id="testBtn" class="action-btn" title="Test pattern" onclick="testPattern()">🔄 Test</button>
     </div>
 
     <!-- Ovládací tlačítka kroků -->
@@ -106,7 +107,7 @@
 
     <!-- Export -->
     <div style="text-align:right;margin-top:10px;margin-bottom:10px;">
-      <button onclick="exportPattern()">⇩ Export</button>
+      <button id="exportBtn" class="action-btn" title="Export pattern" onclick="exportPattern()">⇩ Export</button>
     </div>
 
     <!-- JSON -->

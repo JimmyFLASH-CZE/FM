@@ -125,7 +125,7 @@ body.dark-mode {
   background: rgba(255, 255, 255, 0.25);
   border: none;
   color: white;
-  font-size: 18px;
+  font-size: 16px;
   padding: 6px 10px;
   border-radius: 6px;
   cursor: pointer;
@@ -301,7 +301,7 @@ button {
   -moz-appearance: none;
   appearance: none;
 
-  padding: 7px 14px;
+  padding: 5px 5px;
   border-radius: 8px;
   border: 1px solid #ff7a9c;
   background: linear-gradient(180deg, #ff8fa8, #ff5e82);
@@ -328,6 +328,17 @@ body.dark-mode button:hover {
   background: linear-gradient(180deg, #4c3035, #5c202a);
 }
 
+#testBtn,
+#saveBtn {
+  width: 80px;           /* stejné rozměry */
+  font-size: 16px;
+}
+
+.action-btn {
+  width: 80px;
+  font-size: 16px;
+}
+
 /* ----------------------- ŘÁDKY S NAME/DESC ----------------------- */
 .name-line,
 .desc-line {
@@ -335,10 +346,6 @@ body.dark-mode button:hover {
   align-items: center;
   gap: 8px;
   margin: 10px 0;
-}
-
-.name-line button {
-  margin-left: 8px;
 }
 
 input[type="text"],

@@ -408,7 +408,7 @@ window.onload = () => {
 async function saveToJson() {
   const name = document.getElementById('formulaName').value.trim();
   if (!name) {
-    showStatusModal("Fill in the pattern name.", true);
+    showStatusModal("Fill in the pattern name.", true, "Save Pattern");
     return;
   }
 
@@ -435,10 +435,53 @@ async function saveToJson() {
     });
 
     const text = await res.text();
-    showStatusModal(text); // potvrzení uživateli
+    showStatusModal(text, false, "Save Pattern"); // potvrzení uživateli
     isDirty = false; // reset sledovače změn
   } catch (err) {
-    showStatusModal("Save pattern error: " + (err.message || err), true);
+    showStatusModal("⚠️ Save pattern error: " + (err.message || err), true, "Save Pattern");
+  }
+}
+
+// test vzorce – uloží a spustí na ESP
+async function testPattern() {
+  if (!pattern.length) return;
+  const modal = showStatusModal("🔄 Test pattern: Saving...", false, "Test Pattern");
+  const patternObj = {
+    name: "!EditorLatestTest",
+    description: "Pattern sent for testing from Pattern Studio",
+    parts: pattern.map(p => ({
+      targetPosPercent: p.targetPosPercent,
+      speedPercent: p.speedPercent,
+      accelPercent: p.accelPercent,
+      randomizePercent: p.randomizePercent,
+      aux1: p.aux1,
+      aux2: p.aux2,
+      partDelay: p.partDelay
+    })),
+    partCount: pattern.length
+  };
+
+  try {
+    // 1️⃣ Uloží pattern
+    const res = await fetch("/savePattern", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(patternObj)
+    });
+    const text = await res.text();
+    modal.update("✅ Pattern saved: " + text);
+
+    // 2️⃣ Spustí pattern na ESP
+    modal.update("🔄 Sending pattern to ESP...");
+    const resRun = await fetch("/runPattern", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "!EditorLatestTest" })
+    });
+
+    modal.update("✅ Test pattern uploaded and started.");
+  } catch (err) {
+    showStatusModal("⚠️ Failed: " + (err.message || err), true);
   }
 }
 
@@ -446,7 +489,7 @@ async function saveToJson() {
 function exportPattern() {
   const name = document.getElementById('formulaName').value.trim();
   if (!name) {
-    showStatusModal("Fill the pattern name!", true);
+    showStatusModal("Fill the pattern name!", true, "Export Pattern");
     return;
   }
 
@@ -481,29 +524,32 @@ function exportPattern() {
 }
 
 // === Pomocná funkce pro zobrazení modální zprávy ===
-function showStatusModal(message, isError = false) {
-  // Pokud už modal existuje, odstraníme ho
+function showStatusModal(message, isError = false, title = "Status") {
+  // odstranění starého modalu
   const oldModal = document.querySelector('.status-modal');
   if (oldModal) oldModal.remove();
 
-  // Vytvoření modalu
   const modal = document.createElement('div');
-  modal.className = 'login-modal status-modal'; // využijeme stejný styl jako login modal
+  modal.className = 'login-modal status-modal';
   modal.innerHTML = `
     <div class="login-box ${isError ? 'error' : ''}">
-      <p>${message}</p>
+      <h3>${title}</h3>
+      <p id="statusMessage">${message}</p>
       <div class="login-buttons">
         <button id="statusOk">OK</button>
       </div>
     </div>
   `;
   document.body.appendChild(modal);
-
-  // zobrazit modal
   modal.classList.remove('hidden');
 
-  // po kliknutí na OK zavřít modal
-  modal.querySelector('#statusOk').addEventListener('click', () => {
-    modal.remove();
-  });
+  modal.querySelector('#statusOk').addEventListener('click', () => modal.remove());
+
+  return {
+    update: (newMessage) => {
+      const msgEl = modal.querySelector('#statusMessage');
+      if (msgEl) msgEl.textContent = newMessage;
+    },
+    close: () => modal.remove()
+  };
 }
