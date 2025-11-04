@@ -448,7 +448,7 @@ async function testPattern() {
   const modal = showStatusModal("🔄 Test pattern: Saving...", false, "Test Pattern");
   const patternObj = {
     name: "!EditorLatestTest",
-    description: "Pattern sent for testing from Pattern Studio",
+    description: "Last pattern testing from Pattern Studio",
     parts: pattern.map(p => ({
       targetPosPercent: p.targetPosPercent,
       speedPercent: p.speedPercent,
