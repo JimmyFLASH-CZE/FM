@@ -333,7 +333,8 @@ function drawGraph() {
       ]
     },
     options: {
-      responsive: false,
+      responsive: true,
+      //maintainAspectRatio: false,
       animation: false,
       parsing: false,
       normalized: true,
