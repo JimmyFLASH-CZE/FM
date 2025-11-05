@@ -2,6 +2,18 @@
 <!DOCTYPE html>
 <html lang="cs">
 
+<script>
+  // Okamžitě nastavíme dark/light mód ještě před načtením stylů
+  (() => {
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    if (darkMode === "true") {
+      document.documentElement.classList.add("dark-mode");
+    } else {
+      document.documentElement.classList.remove("dark-mode");
+    }
+  })();
+</script>
+
 <head>
   <meta charset="UTF-8">
   <title>Pattern Editor</title>
