@@ -2,15 +2,15 @@
 <!DOCTYPE html>
 <html lang="cs">
 
-<script>
-  // Okamžitě nastavíme dark/light mód ještě před načtením stylů
-  (() => {
-    const darkMode = localStorage.getItem('darkMode') === 'true';
-    document.body.classList.toggle('dark-mode', darkMode);
-  })();
-</script>
-
 <head>
+  <script>
+    // Okamžitě nastavíme dark/light mód ještě před načtením stylů
+    (() => {
+      const darkMode = localStorage.getItem('darkMode') === 'true';
+      document.documentElement.classList.toggle('dark-mode', darkMode);
+    })();
+  </script>
+
   <meta charset="UTF-8">
   <title>Pattern List</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
