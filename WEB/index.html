@@ -2,6 +2,14 @@
 <!DOCTYPE html>
 <html lang="cs">
 
+<script>
+  // Okamžitě nastavíme dark/light mód ještě před načtením stylů
+  (() => {
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    document.body.classList.toggle('dark-mode', darkMode);
+  })();
+</script>
+
 <head>
   <meta charset="UTF-8">
   <title>Pattern List</title>
@@ -9,18 +17,6 @@
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="favicon.png" type="image/x-icon">
 </head>
-
-<script>
-  // Okamžitě nastavíme dark/light mód ještě před načtením stylů
-  (() => {
-    const darkMode = localStorage.getItem('darkMode') === 'true';
-    if (darkMode === "true") {
-      document.documentElement.classList.add("dark-mode");
-    } else {
-      document.documentElement.classList.remove("dark-mode");
-    }
-  })();
-</script>
 
 <body>
   <!-- === Horní aplikační panel === -->
